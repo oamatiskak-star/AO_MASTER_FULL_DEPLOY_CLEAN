@@ -1,0 +1,5 @@
+[00:00:01.206] Server  WARN     ⚠ Duplicate page detected. pages/dashboard.js and pages/dashboard/index.js resolve to /dashboard
+[00:00:01.206] Server  WARN     ⚠ Duplicate page detected. pages/dashboard.js and pages/dashboard/index.js resolve to /dashboard
+[00:00:01.206] Server  LOG      ✓ Ready in 1044ms
+[00:02:22.011] Browser ERROR   API FOUT: {}
+[00:02:22.011] Browser ERROR   API FOUT: {}

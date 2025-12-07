@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/bouwproffsnederlandbv/Desktop/AO_CLEAN/frontend/pages/index.js"],"sourcesContent":["async function load() {\n  try {\n    const response = await fetch(\"http://localhost:4000/api/projects\", {\n      method: \"GET\"\n    });\n\n    if (!response.ok) {\n      console.error(\"Backend gaf fout:\", response.status);\n      return;\n    }\n\n    const json = await response.json();\n    setProjects(json.projects || []);\n  } catch (e) {\n    console.error(\"Kon backend niet bereiken:\", e);\n  }\n}\n\nuseEffect(() => {\n  load();\n}, []);\n"],"names":[],"mappings":";AAAA,eAAe;IACb,IAAI;QACF,MAAM,WAAW,MAAM,MAAM,sCAAsC;YACjE,QAAQ;QACV;QAEA,IAAI,CAAC,SAAS,EAAE,EAAE;YAChB,QAAQ,KAAK,CAAC,qBAAqB,SAAS,MAAM;YAClD;QACF;QAEA,MAAM,OAAO,MAAM,SAAS,IAAI;QAChC,YAAY,KAAK,QAAQ,IAAI,EAAE;IACjC,EAAE,OAAO,GAAG;QACV,QAAQ,KAAK,CAAC,8BAA8B;IAC9C;AACF;AAEA,UAAU;IACR;AACF,GAAG,EAAE"}}]
-}

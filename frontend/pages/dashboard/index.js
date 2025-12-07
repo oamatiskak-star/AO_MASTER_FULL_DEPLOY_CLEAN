@@ -1,47 +1,39 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function Home() {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function Dashboard() {
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch("/api/projects")
-      .then(r => r.json())
-      .then(data => {
-        setProjects(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("API FOUT:", err);
-        setLoading(false);
-      });
-  }, []);
+    useEffect(() => {
+        async function load() {
+            try {
+                const response = await fetch("http://localhost:4000/api/projects");
+                const json = await response.json();
+                setProjects(json.projects || []);
+            } catch (err) {
+                console.error("Kan dashboard data niet laden", err);
+            } finally {
+                setLoading(false);
+            }
+        }
+        load();
+    }, []);
 
-  return (
-    <div style={{ padding: "20px", fontFamily: "Arial" }}>
-      <h1>SterkBouw Dashboard</h1>
+    return (
+        <div style={{ padding: 20 }}>
+            <h1>Dashboard</h1>
 
-      <section style={{ marginTop: "20px" }}>
-        <h2>Projecten</h2>
-
-        {loading && <p>Data laden...</p>}
-
-        {!loading && projects.length === 0 && (
-          <p>Geen projecten gevonden.</p>
-        )}
-
-        {!loading && projects.length > 0 && (
-          <pre
-            style={{
-              background: "#f4f4f4",
-              padding: "15px",
-              borderRadius: "6px"
-            }}
-          >
-            {JSON.stringify(projects, null, 2)}
-          </pre>
-        )}
-      </section>
-    </div>
-  );
+            {loading ? (
+                <p>Laden…</p>
+            ) : (
+                <ul>
+                    {projects.map((project, index) => (
+                        <li key={index}>
+                            {project.projectnaam} – {project.adres}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
 }

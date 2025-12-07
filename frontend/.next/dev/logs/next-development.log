@@ -1,5 +1,3 @@
-[00:00:01.206] Server  WARN     ⚠ Duplicate page detected. pages/dashboard.js and pages/dashboard/index.js resolve to /dashboard
-[00:00:01.206] Server  WARN     ⚠ Duplicate page detected. pages/dashboard.js and pages/dashboard/index.js resolve to /dashboard
-[00:00:01.206] Server  LOG      ✓ Ready in 1044ms
-[00:02:22.011] Browser ERROR   API FOUT: {}
-[00:02:22.011] Browser ERROR   API FOUT: {}
+[00:00:00.308] Server  LOG      ✓ Ready in 201ms
+[00:00:18.348] Server  ERROR   (node:44248) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)

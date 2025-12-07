@@ -12,8 +12,9 @@ app.use(express.json());
 app.use("/api/projects", projectsRouter);
 app.use("/api/ping", pingRouter);
 
-// START SERVER
-const PORT = 4000;
-app.listen(PORT, () => {
-  console.log("Backend draait op http://localhost:" + PORT);
+// START SERVER (Render FIX)
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("Backend draait op poort: " + PORT);
 });

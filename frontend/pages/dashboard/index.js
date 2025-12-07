@@ -7,7 +7,9 @@ export default function Dashboard() {
     useEffect(() => {
         async function load() {
             try {
-                const response = await fetch("http://localhost:4000/api/projects");
+                const API = process.env.NEXT_PUBLIC_API_URL; 
+                const response = await fetch(`${API}/api/projects`);
+
                 const json = await response.json();
                 setProjects(json.projects || []);
             } catch (err) {

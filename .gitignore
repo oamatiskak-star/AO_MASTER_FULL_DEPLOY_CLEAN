@@ -4,3 +4,9 @@ backend/.next
 .next
 frontend/.next
 backend/.next
+node_modules
+.next
+frontend/node_modules
+backend/node_modules
+frontend/.next
+backend/.next

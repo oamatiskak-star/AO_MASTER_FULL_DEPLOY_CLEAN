@@ -1,5 +1,4 @@
-import { supabase } from "./config.js"
-import jwt from "jsonwebtoken"
+import { supabase } from "./config"
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -13,16 +12,11 @@ export default async function handler(req, res) {
     password
   })
 
-  if (error) return res.status(400).json({ error: error.message })
+  if (error) {
+    return res.status(401).json({ error: "Onjuiste inloggegevens" })
+  }
 
-  const token = jwt.sign(
-    {
-      id: data.user.id,
-      email: data.user.email
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" }
-  )
-
-  res.status(200).json({ token, user: data.user })
+  return res.status(200).json({
+    token: data.session.access_token
+  })
 }

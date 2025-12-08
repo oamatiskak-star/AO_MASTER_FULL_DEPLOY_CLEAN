@@ -1,26 +1,23 @@
-import jwt from "jsonwebtoken"
-import { supabase } from "./config.js"
+import { supabase } from "./config"
 
 export default async function handler(req, res) {
-  const auth = req.headers.authorization
-  if (!auth) return res.status(401).json({ error: "No token" })
-
-  const token = auth.split(" ")[1]
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const authHeader = req.headers.authorization || ""
+    const token = authHeader.replace("Bearer ", "")
 
-    const { data, error } = await supabase
-      .from("user_roles")
-      .select("*")
-      .eq("user_id", decoded.id)
-      .single()
+    if (!token) {
+      return res.status(401).json({ error: "Geen token aanwezig" })
+    }
 
-    if (error) return res.status(400).json({ error: error.message })
+    const { data, error } = await supabase.auth.getUser(token)
 
-    return res.status(200).json({ user: decoded, role: data })
-  } catch {
-    return res.status(401).json({ error: "Invalid token" })
+    if (error || !data.user) {
+      return res.status(401).json({ error: "Token ongeldig" })
+    }
+
+    return res.status(200).json({ user: data.user })
+  } catch (err) {
+    return res.status(500).json({ error: "Server error" })
   }
 }
 

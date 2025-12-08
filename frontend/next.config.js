@@ -1,16 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
-
-  // BELANGRIJK: frontend mag backend benaderen
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "http://localhost:4000/api/:path*",
-      },
-    ];
-  }
+  reactStrictMode: false
 };
 
-export default nextConfig;
+module.exports = nextConfig;

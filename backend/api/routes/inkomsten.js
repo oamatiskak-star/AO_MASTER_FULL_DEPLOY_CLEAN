@@ -1,4 +1,4 @@
-<?php /* FILE: backend/api/routes/calc.js — VOLLEDIG BESTAND */ ?>
+<?php /* FILE: backend/api/routes/inkomsten.js — VOLLEDIG BESTAND */ ?>
 
 import express from "express"
 import { createClient } from "@supabase/supabase-js"
@@ -8,15 +8,13 @@ dotenv.config()
 
 const router = express.Router()
 
-// Supabase client
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
 )
 
 /* -----------------------------------------------------------
-   GET — alle calculaties voor project
-   /api/calc?project_id=xxx
+   GET — alle huurinkomsten per project
 ----------------------------------------------------------- */
 router.get("/", async (req, res) => {
   const { project_id } = req.query
@@ -26,59 +24,46 @@ router.get("/", async (req, res) => {
   }
 
   const { data, error } = await supabase
-    .from("calculaties")
+    .from("inkomsten")
     .select("*")
     .eq("project_id", project_id)
+    .order("datum", { ascending: false })
 
   if (error) return res.status(500).json({ error: error.message })
 
-  res.json({ calculaties: data })
+  res.json({ inkomsten: data })
 })
 
 /* -----------------------------------------------------------
-   POST — nieuwe calculatie toevoegen
+   POST — huurcontract / maandbetaling toevoegen
 ----------------------------------------------------------- */
 router.post("/", async (req, res) => {
   const {
     project_id,
-    omschrijving,
-    categorie,
-    stabu_code,
-    eenheid,
-    hoeveelheid,
-    arbeidsuren,
-    materiaalkosten,
-    arbeidskosten,
-    opslag_percentage
+    huurder,
+    bedrag,
+    datum,
+    maand,
+    jaar,
+    status
   } = req.body
 
-  if (!project_id) {
-    return res.status(400).json({ error: "project_id ontbreekt" })
+  if (!project_id || !bedrag || !datum) {
+    return res.status(400).json({ error: "verplichte velden missen" })
   }
-
-  const totaal =
-    Number(materiaalkosten || 0) +
-    Number(arbeidskosten || 0) +
-    (Number(materiaalkosten || 0) +
-      Number(arbeidskosten || 0)) *
-      (Number(opslag_percentage || 0) / 100)
 
   const payload = {
     project_id,
-    omschrijving,
-    categorie,
-    stabu_code,
-    eenheid,
-    hoeveelheid,
-    arbeidsuren,
-    materiaalkosten,
-    arbeidskosten,
-    opslag_percentage,
-    totaal
+    huurder,
+    bedrag: Number(bedrag),
+    datum,
+    maand,
+    jaar,
+    status
   }
 
   const { data, error } = await supabase
-    .from("calculaties")
+    .from("inkomsten")
     .insert([payload])
     .select("*")
 
@@ -88,14 +73,14 @@ router.post("/", async (req, res) => {
 })
 
 /* -----------------------------------------------------------
-   PUT — calculatie bewerken
+   PUT — inkomsten updaten
 ----------------------------------------------------------- */
 router.put("/:id", async (req, res) => {
   const { id } = req.params
   const updates = req.body
 
   const { data, error } = await supabase
-    .from("calculaties")
+    .from("inkomsten")
     .update(updates)
     .eq("id", id)
     .select("*")
@@ -106,13 +91,13 @@ router.put("/:id", async (req, res) => {
 })
 
 /* -----------------------------------------------------------
-   DELETE — calculatie verwijderen
+   DELETE — inkomstenregel verwijderen
 ----------------------------------------------------------- */
 router.delete("/:id", async (req, res) => {
   const { id } = req.params
 
   const { error } = await supabase
-    .from("calculaties")
+    .from("inkomsten")
     .delete()
     .eq("id", id)
 

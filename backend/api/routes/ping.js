@@ -1,9 +1,8 @@
 import express from "express";
-
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.json({ message: "pong" });
+  res.json({ success: true, message: "pong" });
 });
 
 export default router;

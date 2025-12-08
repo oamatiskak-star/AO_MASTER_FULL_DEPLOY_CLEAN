@@ -1,20 +1,33 @@
-import * as dotenv from "dotenv";
-dotenv.config({ path: "./.env" });
+import * as dotenv from "dotenv"
+dotenv.config({ path: "./.env" })
 
-import express from "express";
-import projectsRouter from "./routes/projects.js";
-import pingRouter from "./routes/ping.js";
+import express from "express"
+import compression from "compression"
+import apicache from "apicache"
 
-const app = express();
-app.use(express.json());
+// import alle routes
+import juridischV2Router from "./routes/juridisch-v2.js"
 
-// ROUTES
-app.use("/api/projects", projectsRouter);
-app.use("/api/ping", pingRouter);
+const app = express()
+app.use(express.json())
 
-// START SERVER (Render FIX)
-const PORT = process.env.PORT || 4000;
+// caching
+let cache = apicache.middleware
+app.use(cache("10 minutes"))
 
+// compressie
+app.use(compression())
+
+// headers
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "public, max-age=600")
+  next()
+})
+
+// routes
+app.use("/api/juridisch-v2", juridischV2Router)
+
+const PORT = process.env.PORT || 4000
 app.listen(PORT, "0.0.0.0", () => {
-  console.log("Backend draait op poort: " + PORT);
-});
+  console.log("Backend draait op poort: " + PORT)
+})

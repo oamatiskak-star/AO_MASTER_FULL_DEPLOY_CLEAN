@@ -17,27 +17,21 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Onjuiste inloggegevens" });
     }
 
-    // bepaal rol automatisch
-    const assignedRole = email === "o.amatiskak@sterkbouw.nl"
-      ? "admin"
-      : "member";
+    // Rol ophalen
+    const { data: roleRecord, error: roleError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id)
+      .single();
 
-    // user-role API aanroepen met geldige role
-    const roleRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user-roles`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user_id: data.user.id,
-        role: assignedRole
-      })
-    });
-
-    const roleData = await roleRes.json();
+    if (roleError) {
+      return res.status(500).json({ error: "Kan rol niet ophalen" });
+    }
 
     return res.status(200).json({
       token: data.session.access_token,
       user: data.user,
-      role: roleData.role || assignedRole
+      role: roleRecord.role
     });
 
   } catch (err) {

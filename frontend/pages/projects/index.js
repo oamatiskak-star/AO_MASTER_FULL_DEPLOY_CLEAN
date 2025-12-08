@@ -1,52 +1,65 @@
 import { useEffect, useState } from "react";
+import SterkBouwLayout from "../../src/components/SterkBouwLayout";
+import Panel from "../../src/components/Panel";
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  async function load() {
+    const res = await fetch("https://ao-master-full-deploy-clean.onrender.com/api/projects");
+    const json = await res.json();
+    setProjects(json.data || []);
+    setLoading(false);
+  }
+
   useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch(
-          "https://ao-master-full-deploy-clean.onrender.com/api/projects"
-        );
-        const json = await res.json();
-        setProjects(json.projects || []);
-      } catch (err) {
-        console.error("Fout bij laden projecten:", err);
-      }
-      setLoading(false);
-    }
     load();
   }, []);
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1>Projecten</h1>
+    <SterkBouwLayout title="Projecten">
+      <a
+        href="/projects/new"
+        style={{
+          background: "#FFD400",
+          padding: "12px 18px",
+          textDecoration: "none",
+          color: "#000",
+          fontWeight: "bold",
+          borderRadius: 4,
+          display: "inline-block",
+          marginBottom: 20
+        }}
+      >
+        Nieuw project
+      </a>
 
-      {loading && <p>Projecten laden...</p>}
-
-      {!loading && projects.length === 0 && (
-        <p>Geen projecten gevonden.</p>
-      )}
+      {loading && <p>Laden...</p>}
 
       {!loading &&
         projects.map((p) => (
-          <div
-            key={p.id}
-            style={{
-              border: "1px solid #ddd",
-              padding: 20,
-              marginTop: 20,
-              borderRadius: 8,
-              background: "#fafafa"
-            }}
-          >
-            <h2>{p.projectnaam}</h2>
+          <Panel key={p.id} title={p.projectnaam}>
             <p>Adres: {p.adres}</p>
-            <p>Type project: {p.type_project}</p>
-          </div>
+            <p>Opdrachtgever: {p.opdrachtgever}</p>
+
+            <a
+              href={`/projects/${p.id}`}
+              style={{
+                background: "#000",
+                color: "#FFD400",
+                padding: "10px 14px",
+                textDecoration: "none",
+                borderRadius: 4,
+                fontWeight: "bold",
+                marginTop: 10,
+                display: "inline-block"
+              }}
+            >
+              Open
+            </a>
+          </Panel>
         ))}
-    </div>
+    </SterkBouwLayout>
   );
 }

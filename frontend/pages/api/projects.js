@@ -1,26 +1,29 @@
-import { supabase } from "./config.js"
+import { supabase } from "./config";
 
 export default async function handler(req, res) {
-  if (req.method === "GET") {
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
+  const { id } = req.query;
 
-    if (error) return res.status(400).json({ error: error.message })
+  try {
+    if (id) {
+      // één project ophalen
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("id", id)
+        .single();
 
-    return res.status(200).json({ projects: data })
+      if (error) return res.status(500).json({ error: error.message });
+
+      return res.status(200).json(data);
+    }
+
+    // alle projecten ophalen
+    const { data, error } = await supabase.from("projects").select("*");
+
+    if (error) return res.status(500).json({ error: error.message });
+
+    return res.status(200).json(data);
+  } catch (err) {
+    return res.status(500).json({ error: "Server error" });
   }
-
-  if (req.method === "POST") {
-    const { name, locatie, status } = req.body
-    const { data, error } = await supabase
-      .from("projects")
-      .insert([{ name, locatie, status }])
-
-    if (error) return res.status(400).json({ error: error.message })
-
-    return res.status(200).json({ project: data })
-  }
-
-  return res.status(405).json({ error: "Method not allowed" })
 }

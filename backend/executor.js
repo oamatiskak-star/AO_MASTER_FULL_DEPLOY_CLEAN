@@ -8,6 +8,9 @@ app.get("/ping", (req, res) => {
   res.json({ status: "executor online" });
 });
 
-app.listen(3000, () => {
-  console.log("Executor draait op poort 3000");
+// Render gebruikt een dynamische poort via process.env.PORT
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Executor draait op poort " + PORT);
 });

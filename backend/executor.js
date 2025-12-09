@@ -1,4 +1,5 @@
 import express from "express";
+import fetch from "node-fetch";
 
 const app = express();
 app.use(express.json());
@@ -26,7 +27,7 @@ app.get("/tg-test", async (req, res) => {
   const url = `https://api.telegram.org/bot${token}/sendMessage`;
 
   try {
-    const r = await fetch(url, {
+    await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

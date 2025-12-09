@@ -1,0 +1,1 @@
+const express = require("express"); const cors = require("cors"); const body = require("body-parser"); const app = express(); app.use(cors()); app.use(body.json()); app.get("/api/ping", (req,res)=>res.json({ok:true,msg:"Backend draait"})); const routes = require("./api/routes"); app.use("/api", routes); app.listen(4000, ()=>console.log("AO Backend actief op :4000"));

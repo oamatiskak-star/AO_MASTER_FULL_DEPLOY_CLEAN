@@ -1,8 +1,8 @@
 {
   "name": "ao-executor",
   "version": "1.0.0",
+  "description": "AO Executor for Render",
   "main": "executor.js",
-  "type": "module",
   "scripts": {
     "start": "node executor.js"
   }

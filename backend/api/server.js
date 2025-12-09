@@ -3,10 +3,12 @@ dotenv.config()
 
 import express from "express"
 import cors from "cors"
+import projectsRoute from "./routes/projects.js"
 
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.use("/api/projects", projectsRoute)
 
 app.get("/api/ping", (req, res) => {
   res.json({ ok: true })

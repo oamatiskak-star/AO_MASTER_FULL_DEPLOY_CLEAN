@@ -1,1 +1,9 @@
-import express from "express"; const router = express.Router(); router.get("/",(req,res)=>res.json({ok:true})); export default router;
+import express from "express"
+import { createProject, listProjects } from "../controllers/projectsController.js"
+
+const router = express.Router()
+
+router.post("/create", createProject)
+router.get("/list", listProjects)
+
+export default router

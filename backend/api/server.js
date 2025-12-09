@@ -10,6 +10,7 @@ import projectsRoute from "./routes/projects.js"
 import pingRoute from "./routes/ping.js"
 
 const app = express()
+
 app.use(cors())
 app.use(express.json())
 
@@ -19,6 +20,7 @@ app.use("/api/projects", projectsRoute)
 app.use("/api/ping", pingRoute)
 
 const PORT = process.env.PORT || 4000
+
 app.listen(PORT, () => {
   console.log("AO MASTER BACKEND draait op http://localhost:" + PORT)
 })

@@ -1,7 +1,7 @@
-import fs from "fs"
-import path from "path"
+const fs = require("fs");
+const path = require("path");
 
-const base = "backend-cloud"
+const base = "backend-cloud";
 
 const structure = [
   `${base}/api`,
@@ -12,10 +12,15 @@ const structure = [
   `${base}/engines`,
   `${base}/workers`,
   `${base}/storage`
-]
+];
 
 for (const dir of structure) {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    console.log("Created:", dir);
+  } else {
+    console.log("Exists:", dir);
+  }
 }
 
-console.log("CLOUD BACKEND STRUCTURE GENERATED")
+console.log("CLOUD BACKEND STRUCTURE GENERATED");

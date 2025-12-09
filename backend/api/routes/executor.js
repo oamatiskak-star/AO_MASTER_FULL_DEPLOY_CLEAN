@@ -1,76 +1,35 @@
 import express from "express"
-import fetch from "node-fetch"
+import axios from "axios"
 
 const router = express.Router()
 
-// PING
-router.get("/ping", (req, res) => {
-res.json({ status: "executor online" })
-})
+const EXECUTOR_URL = process.env.EXECUTOR_URL
 
-// HEALTH
-router.get("/health", (req, res) => {
-res.json({ ok: true, timestamp: Date.now() })
-})
-
-// STATUS
-router.get("/status", (req, res) => {
-res.json({ executor: "running", timestamp: Date.now() })
-})
-
-// TELEGRAM TEST
-router.get("/tg-test", async (req, res) => {
-const token = process.env.TELEGRAM_BOT_TOKEN
-const chatId = process.env.TELEGRAM_CHAT_ID
-
-const url = https://api.telegram.org/bot${token}/sendMessage
-
-try {
-await fetch(url, {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-chat_id: chatId,
-text: "Executor online"
-})
-})
-
-res.json({ sent: true })
-
-
-} catch (err) {
-res.json({ sent: false, error: err.toString() })
-}
-})
-
-// EXECUTE ENDPOINT
 router.post("/execute", async (req, res) => {
-const { task } = req.body
+  const { task } = req.body
 
-if (!task) {
-return res.status(400).json({ error: "Geen taak ontvangen" })
-}
+  if (!task) {
+    return res.status(400).json({ error: "Geen taak ontvangen" })
+  }
 
-try {
-console.log("Taak uitvoeren:", task)
-
-const token = process.env.TELEGRAM_BOT_TOKEN
-const chatId = process.env.TELEGRAM_CHAT_ID
-const url = `https://api.telegram.org/bot${token}/sendMessage`
-
-await fetch(url, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    chat_id: chatId,
-    text: `Taak uitgevoerd: ${task}`
-  })
+  try {
+    const result = await axios.post(`${EXECUTOR_URL}/execute`, { task })
+    res.json({ ok: true, executor_response: result.data })
+  } catch (err) {
+    res.json({
+      ok: false,
+      error: err.toString()
+    })
+  }
 })
 
-res.json({ ok: true, executed: task })
-
-
-} catch (err) {
-res.json({ ok: false, error: err.toString() })
-}
+router.get("/status", async (req, res) => {
+  try {
+    const r = await axios.get(`${EXECUTOR_URL}/status`)
+    res.json(r.data)
+  } catch {
+    res.json({ ok: false })
+  }
 })
+
+export default router

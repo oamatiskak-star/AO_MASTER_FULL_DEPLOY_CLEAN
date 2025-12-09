@@ -2,12 +2,11 @@
 
 set -e
 
-echo "=== AO CLOUD BACKEND GENERATOR ==="
-echo "Working directory: $(pwd)"
+echo "=== AO CLOUD BACKEND GENERATOR START ==="
+echo "WORKDIR: $(pwd)"
 
 BASE="backend-cloud"
 
-# Map-structuur
 DIRS=(
   "$BASE/api"
   "$BASE/api/routes"
@@ -22,10 +21,10 @@ DIRS=(
 for d in "${DIRS[@]}"; do
   if [ ! -d "$d" ]; then
     mkdir -p "$d"
-    echo "Created: $d"
+    echo "Made: $d"
   else
     echo "Exists: $d"
   fi
 done
 
-echo "=== CLOUD BACKEND STRUCTURE GENERATED ==="
+echo "=== AO CLOUD BACKEND GENERATOR DONE ==="

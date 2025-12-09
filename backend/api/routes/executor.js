@@ -16,10 +16,7 @@ router.post("/execute", async (req, res) => {
     const result = await axios.post(`${EXECUTOR_URL}/execute`, { task })
     res.json({ ok: true, executor_response: result.data })
   } catch (err) {
-    res.json({
-      ok: false,
-      error: err.toString()
-    })
+    res.json({ ok: false, error: err.toString() })
   }
 })
 

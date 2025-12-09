@@ -1,0 +1,9 @@
+{
+  "name": "ao-executor",
+  "version": "1.0.0",
+  "main": "executor.js",
+  "type": "module",
+  "scripts": {
+    "start": "node executor.js"
+  }
+}

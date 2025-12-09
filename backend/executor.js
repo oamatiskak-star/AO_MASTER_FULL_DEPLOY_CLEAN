@@ -1,5 +1,4 @@
 import express from "express";
-import fetch from "node-fetch";
 
 const app = express();
 app.use(express.json());
@@ -72,7 +71,7 @@ app.post("/execute", async (req, res) => {
   }
 });
 
-// PORT
+// POORT
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

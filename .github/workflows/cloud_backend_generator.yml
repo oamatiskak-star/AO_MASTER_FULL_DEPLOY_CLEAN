@@ -13,30 +13,5 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Generate backend-cloud structure
-        run: |
-          mkdir -p backend-cloud/api/routes
-          mkdir -p backend-cloud/api/controllers
-          mkdir -p backend-cloud/api/services
-          mkdir -p backend-cloud/api/middleware
-          mkdir -p backend-cloud/engines
-          mkdir -p backend-cloud/workers
-          mkdir -p backend-cloud/storage/modules_incoming
-          mkdir -p backend-cloud/storage/modules_processed
-          mkdir -p backend-cloud/storage/tmp_uploads
-
-          echo "module.exports = {}" > backend-cloud/api/routes/index.js
-          echo "console.log('AO Cloud Backend Ready')" > backend-cloud/server.js
-
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "AO Cloud Backend Auto-Generated"
-                - name: Run generator
+      - name: Run Cloud Backend Generator
         run: bash cloud_backend_generator.sh
-

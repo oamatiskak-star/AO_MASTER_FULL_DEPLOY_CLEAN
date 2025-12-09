@@ -1,19 +1,17 @@
 import express from "express"
+import { runModule } from "../moduleEngine.js"
+
 const router = express.Router()
 
-router.post("/generate", async (req, res) => {
-  const { moduleType, projectId } = req.body
+router.post("/run", async (req, res) => {
+  const { task } = req.body
 
-  if (!moduleType || !projectId) {
-    return res.status(400).json({ error: "Data mist" })
+  if (!task) {
+    return res.status(400).json({ error: "Geen task" })
   }
 
-  res.json({
-    ok: true,
-    message: "Module-generatie geaccepteerd",
-    moduleType,
-    projectId
-  })
+  const result = await runModule(task)
+  res.json(result)
 })
 
 export default router

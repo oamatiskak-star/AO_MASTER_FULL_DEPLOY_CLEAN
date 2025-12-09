@@ -1,13 +1,19 @@
-import express from "express";
-import fs from "fs";
-import path from "path";
+import express from "express"
+const router = express.Router()
 
-const router = express.Router();
-const PROCESSED = path.join(process.cwd(), "backend/modules_processed");
+router.post("/generate", async (req, res) => {
+  const { moduleType, projectId } = req.body
 
-router.get("/", (req, res) => {
-const files = fs.readdirSync(PROCESSED).filter(f => f.endsWith(".zip"));
-res.json({ modules: files });
-});
+  if (!moduleType || !projectId) {
+    return res.status(400).json({ error: "Data mist" })
+  }
 
-export default router;
+  res.json({
+    ok: true,
+    message: "Module-generatie geaccepteerd",
+    moduleType,
+    projectId
+  })
+})
+
+export default router

@@ -1,8 +1,8 @@
-import express from "express";
-const router = express.Router();
+import express from "express"
+const router = express.Router()
 
 router.get("/", (req, res) => {
-  res.json({ success: true, message: "pong" });
-});
+  res.json({ ok: true, timestamp: Date.now() })
+})
 
-export default router;
+export default router

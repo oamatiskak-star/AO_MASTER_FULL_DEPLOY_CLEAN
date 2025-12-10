@@ -1,57 +1,90 @@
 import axios from "axios"
+import fs from "fs"
+import path from "path"
+import { fileURLToPath } from "url"
 import { sendTelegram } from "./telegram.js"
+import { handleTelegramCommand } from "./telegramCommands.js"
 
-// Hard-coded fallback interval (1 minuut)
-const PING_INTERVAL = 60 * 1000
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-// Backend URL uit environment
-const BACKEND_URL = process.env.BACKEND_URL
+// ---------------------------------------------------
+// CONFIG
+// ---------------------------------------------------
+const BACKEND = process.env.BACKEND_URL
+const FRONTEND = process.env.FRONTEND_URL
+const EXECUTOR = process.env.EXECUTOR_URL
 
-// Executor URL uit environment (optioneel)
-const EXECUTOR_URL = process.env.EXECUTOR_URL || "not-set"
+const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID
 
-// Startup event
-async function notifyStartup() {
-  await sendTelegram(
-    `AO Executor gestart.\nBackend: ${BACKEND_URL}\nExecutor: ${EXECUTOR_URL}`
-  )
+if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) {
+  console.log("Telegram settings ontbreken")
 }
 
-// Error handler met Telegram
-async function notifyError(err) {
-  await sendTelegram(`AO Executor fout:\n${err?.message || err}`)
+// ---------------------------------------------------
+// SELF LOGGING
+// ---------------------------------------------------
+const logFile = path.join(__dirname, "executor.log")
+
+function writeLog(line) {
+  const timestamp = new Date().toISOString()
+  fs.appendFileSync(logFile, `[${timestamp}] ${line}\n`)
 }
 
-// Self-ping functie
-async function selfPing() {
+// ---------------------------------------------------
+// TELEGRAM POLLING
+// ---------------------------------------------------
+let offset = 0
+
+async function pollTelegram() {
   try {
-    const url = `${BACKEND_URL}/api/ping`
-    const res = await axios.get(url)
+    const res = await axios.get(
+      `https://api.telegram.org/bot${TELEGRAM_TOKEN}/getUpdates?offset=${offset}`
+    )
 
-    console.log("Self-ping OK:", res.data)
+    if (res.data.result && res.data.result.length > 0) {
+      for (const update of res.data.result) {
+        offset = update.update_id + 1
 
+        const message = update.message?.text
+        if (message) {
+          writeLog("Command ontvangen: " + message)
+          await handleTelegramCommand(message)
+        }
+      }
+    }
   } catch (err) {
-    console.log("Self-ping ERROR:", err.message)
-    await notifyError(err)
+    writeLog("Telegram error: " + err.message)
   }
 }
 
-// Main executor loop
-async function startExecutor() {
-  console.log("AO Executor wordt gestart...")
-  await notifyStartup()
-
-  // Eerste ping meteen
-  await selfPing()
-
-  // Interval pings
-  setInterval(async () => {
-    await selfPing()
-  }, PING_INTERVAL)
+// ---------------------------------------------------
+// SELF-PING BACKEND
+// ---------------------------------------------------
+async function selfPing() {
+  try {
+    const res = await axios.get(BACKEND + "/api/ping")
+    writeLog("Self-ping OK")
+  } catch (err) {
+    writeLog("Self-ping fout: " + err.message)
+    await sendTelegram("AO Executor verloor contact met backend:\n" + err.message)
+  }
 }
 
-// Start het systeem
-startExecutor().catch(async err => {
-  console.log("Startup ERROR:", err.message)
-  await notifyError(err)
-})
+// ---------------------------------------------------
+// MAIN EXECUTOR LOOP
+// ---------------------------------------------------
+async function executorLoop() {
+  writeLog("Executor loop actief")
+}
+
+// ---------------------------------------------------
+// INTERVALS
+// ---------------------------------------------------
+setInterval(pollTelegram, 1500)
+setInterval(selfPing, 30000)
+setInterval(executorLoop, 5000)
+
+writeLog("AO EXECUTOR GESTART")
+console.log("AO EXECUTOR GESTART — LISTENING")

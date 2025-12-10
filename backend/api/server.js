@@ -3,24 +3,24 @@ dotenv.config()
 
 import express from "express"
 import cors from "cors"
-
-import executorRoute from "./routes/executor.js"
-import modulesRoute from "./routes/modules.js"
-import projectsRoute from "./routes/projects.js"
-import pingRoute from "./routes/ping.js"
+import calcRouter from "./routes/calc.js"
+import fixedPriceRouter from "./routes/fixedprice.js"
+import leveranciersRouter from "./routes/leveranciers.js"
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
 
-app.use("/api/executor", executorRoute)
-app.use("/api/modules", modulesRoute)
-app.use("/api/projects", projectsRoute)
-app.use("/api/ping", pingRoute)
+app.get("/api/ping", (req,res) => {
+res.json({ status:"ok", time:Date.now() })
+})
+
+app.use("/api/calc", calcRouter)
+app.use("/api/fixedprice", fixedPriceRouter)
+app.use("/api/leveranciers", leveranciersRouter)
 
 const PORT = process.env.PORT || 4000
-
-app.listen(PORT, () => {
-  console.log("AO MASTER BACKEND draait op http://localhost:" + PORT)
+app.listen(PORT, "0.0.0.0", () => {
+console.log("AO Backend draait op poort " + PORT)
 })

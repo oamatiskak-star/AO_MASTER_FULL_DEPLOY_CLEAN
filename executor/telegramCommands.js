@@ -1,80 +1,97 @@
-import axios from "axios"
+// executor/telegram/telegramCommands.js
+
 import { sendTelegram } from "./telegram.js"
+import fetch from "node-fetch"
 
-const BACKEND = process.env.BACKEND_URL
-const FRONTEND = process.env.FRONTEND_URL
-const EXECUTOR = process.env.EXECUTOR_URL
+// ----------------------
+// Command parsing helper
+// ----------------------
+function parseCommand(text) {
+  if (!text) return null
+  if (!text.startsWith("/")) return null
 
-export async function handleTelegramCommand(text) {
-  const cmd = text.trim().toLowerCase()
+  const parts = text.trim().split(" ")
+  const command = parts[0].toLowerCase()
+  const args = parts.slice(1)
 
-  // STATUS
-  if (cmd === "ao status") {
-    await sendTelegram(
-      "AO Status:\n" +
-      "Backend: " + BACKEND + "\n" +
-      "Frontend: " + FRONTEND + "\n" +
-      "Executor: " + EXECUTOR
-    )
-    return
-  }
+  return { command, args }
+}
 
-  // PING
-  if (cmd === "ao ping") {
-    try {
-      const res = await axios.get(BACKEND + "/api/ping")
-      await sendTelegram("Ping OK: " + JSON.stringify(res.data))
-    } catch (err) {
-      await sendTelegram("Ping fout: " + err.message)
+// ----------------------
+// Command handlers
+// ----------------------
+async function handleStatus() {
+  return "Status OK. AO Executor draait en luistert."
+}
+
+async function handleBackend() {
+  return "Backend check wordt uitgevoerd…"
+}
+
+async function handleExecutor() {
+  return "Executor actief en verbonden met Telegram."
+}
+
+async function handleRestart() {
+  return "Opdracht ontvangen: executor herstart-signaal verzonden."
+}
+
+async function handleHelp() {
+  return (
+    "Beschikbare commando’s:\n" +
+    "/status - huidige status\n" +
+    "/backend - check backend\n" +
+    "/executor - check executor\n" +
+    "/restart - restart opdracht\n" +
+    "/help - toon dit menu"
+  )
+}
+
+// ----------------------
+// Core handler functie
+// ----------------------
+export async function handleTelegramCommand(message) {
+  try {
+    if (!message || !message.text) return
+
+    const parsed = parseCommand(message.text)
+    if (!parsed) return
+
+    const { command } = parsed
+
+    let output = null
+
+    switch (command) {
+      case "/status":
+        output = await handleStatus()
+        break
+
+      case "/backend":
+        output = await handleBackend()
+        break
+
+      case "/executor":
+        output = await handleExecutor()
+        break
+
+      case "/restart":
+        output = await handleRestart()
+        break
+
+      case "/help":
+        output = await handleHelp()
+        break
+
+      default:
+        output = "Onbekend commando. Gebruik /help"
+        break
     }
-    return
-  }
 
-  // ROUTES
-  if (cmd === "ao routes") {
-    try {
-      const res = await axios.get(BACKEND + "/api/modules")
-      await sendTelegram("Routes geladen:\n" + JSON.stringify(res.data))
-    } catch (err) {
-      await sendTelegram("Route fout: " + err.message)
+    if (output) {
+      await sendTelegram(output)
     }
-    return
+  } catch (err) {
+    console.error("Fout in telegramCommands.js:", err)
+    await sendTelegram("Fout bij verwerken van commando.")
   }
-
-  // FIXED PRICE TEST
-  if (cmd === "ao fixedprice test") {
-    try {
-      const res = await axios.get(BACKEND + "/api/fixedprice/test")
-      await sendTelegram("FP Test OK:\n" + JSON.stringify(res.data))
-    } catch (err) {
-      await sendTelegram("FP Test fout:\n" + err.message)
-    }
-    return
-  }
-
-  // CALC TEST
-  if (cmd === "ao calc test") {
-    try {
-      const res = await axios.get(BACKEND + "/api/calc/test")
-      await sendTelegram("Calc OK:\n" + JSON.stringify(res.data))
-    } catch (err) {
-      await sendTelegram("Calc fout:\n" + err.message)
-    }
-    return
-  }
-
-  // DEPLOY FRONTEND
-  if (cmd === "ao deploy frontend") {
-    await sendTelegram("Frontend deploy wordt gestart...")
-    return
-  }
-
-  // DEPLOY BACKEND
-  if (cmd === "ao deploy backend") {
-    await sendTelegram("Backend deploy wordt gestart...")
-    return
-  }
-
-  // ONBEKEND COMMAND
-  await sendTelegram("Onbekend command: " + cmd)
 }

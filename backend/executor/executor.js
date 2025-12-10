@@ -55,7 +55,7 @@ console.log("Executor draait op poort " + PORT)
 
 // Local heartbeat ping to avoid Render HTML responses
 setInterval(() => {
-  fetch(`http://localhost:${PORT}/ping\`
+  fetch(`http://localhost:${PORT}/ping)`
   .catch(() => {})
   }, 60000)
   

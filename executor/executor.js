@@ -1,48 +1,29 @@
-import axios from "axios"
-import { sendTelegram } from "./telegram.js"
-import { handleTelegramCommand } from "./telegramCommands.js"
+import fetch from "node-fetch";
+import { sendTelegram } from "./telegram/telegram.js";
+import { handleCommand } from "./telegram/telegramCommands.js";
 
-console.log("AO Executor gestart…")
+const BACKEND_URL = process.env.BACKEND_URL;
 
-// Basisconfig vanuit Render environment
-const BACKEND_URL = process.env.BACKEND_URL
-const FRONTEND_URL = process.env.FRONTEND_URL
-const EXECUTOR_URL = process.env.EXECUTOR_URL
-
-// Interval voor self-ping
-const SELF_PING_INTERVAL = 30000
-
-// Self-ping functie
-async function selfPing() {
+// ----------------------------
+// SELF-PING LOOP
+// ----------------------------
+async function pingBackend() {
   try {
-    const res = await axios.get(`${BACKEND_URL}/api/ping`)
-    console.log("Self-ping OK", res.status)
+    const res = await fetch(`${BACKEND_URL}/api/ping`);
+    const json = await res.json();
+
+    console.log("Backend ping:", json);
   } catch (err) {
-    console.error("Self-ping fout", err.message)
-    await sendTelegram(`AO EXECUTOR FOUT: backend niet bereikbaar\n${err.message}`)
+    console.log("Ping fout:", err.message);
   }
 }
 
-// Telegram listener
-async function listenTelegram() {
-  try {
-    const cmd = await handleTelegramCommand()
-    if (cmd) {
-      await sendTelegram(`Commando ontvangen: ${cmd}`)
-      console.log("Telegram commando:", cmd)
-    }
-  } catch (err) {
-    console.error("Telegram listener fout:", err.message)
-  }
-}
+// elke 10 sec ping
+setInterval(pingBackend, 10000);
 
-// Hoofdloop
-async function loop() {
-  await selfPing()
-  await listenTelegram()
-}
+// ----------------------------
+// TELEGRAM OPSTART BERICHT
+// ----------------------------
+sendTelegram("AO Executor gestart en verbonden met backend.");
 
-// Start executor
-setInterval(loop, SELF_PING_INTERVAL)
-
-console.log("AO Executor draait en luistert naar backend + telegram…")
+console.log("AO Executor draait...");

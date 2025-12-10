@@ -1,5 +1,5 @@
 {
-  "name": "ao_executor",
+  "name": "ao-executor",
   "version": "1.0.0",
   "type": "module",
   "main": "executor.js",
@@ -7,6 +7,8 @@
     "start": "node executor.js"
   },
   "dependencies": {
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "telegraf": "^4.12.2",
+    "dotenv": "^16.4.5"
   }
 }

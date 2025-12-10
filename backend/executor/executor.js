@@ -4,12 +4,12 @@ import fetch from "node-fetch"
 const app = express()
 app.use(express.json())
 
-// Root endpoint voor Render healthchecks
+// Root endpoint for Render healthchecks
 app.get("/", (req, res) => {
   res.json({ ok: true, service: "executor" })
 })
 
-// Ping voor interne executor check
+// Ping endpoint
 app.get("/ping", (req, res) => {
   res.json({ status: "executor online" })
 })
@@ -48,21 +48,21 @@ app.post("/execute", async (req, res) => {
     })
 
     res.json({ ok: true, executed: task })
+
   } catch (err) {
     res.json({ ok: false, error: err.toString() })
   }
 })
 
-// Start server
+// Start server (RENDER FIX: MUST BIND TO 0.0.0.0)
 const PORT = process.env.PORT || 7070
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log("Executor draait op poort " + PORT)
 })
 
-// Heartbeat om Render HTML responses te voorkomen
+// Heartbeat to avoid Render HTML fallbacks
 setInterval(() => {
   const url = "http://localhost:" + PORT + "/ping"
   fetch(url).catch(() => {})
 }, 60000)
-

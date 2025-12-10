@@ -53,8 +53,7 @@ app.listen(PORT, () => {
 console.log("Executor draait op poort " + PORT)
 })
 
-// Correct heartbeat ping (LOCAL instead of Render URL)
+// Local heartbeat ping to avoid Render HTML responses
 setInterval(() => {
-fetch(http://localhost:${PORT}/ping)
-.catch(() => {})
+fetch(http://localhost:${PORT}/ping).catch(() => {})
 }, 60000)

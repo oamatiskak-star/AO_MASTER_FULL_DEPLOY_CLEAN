@@ -1,3 +1,7 @@
+-- ============================================
+-- PROJECTS
+-- ============================================
+
 create table projects (
 id uuid primary key default gen_random_uuid(),
 user_id uuid not null,
@@ -7,17 +11,25 @@ created_at timestamp default now()
 
 alter table projects enable row level security;
 
-create policy "user_select_own_projects"
-on projects for select using (user_id = auth.uid());
+create policy "select_projects"
+on projects for select
+using (user_id = auth.uid());
 
-create policy "user_insert_own_projects"
-on projects for insert with check (user_id = auth.uid());
+create policy "insert_projects"
+on projects for insert
+with check (user_id = auth.uid());
 
-create policy "user_update_own_projects"
-on projects for update using (user_id = auth.uid());
+create policy "update_projects"
+on projects for update
+using (user_id = auth.uid());
 
-create policy "user_delete_own_projects"
-on projects for delete using (user_id = auth.uid());
+create policy "delete_projects"
+on projects for delete
+using (user_id = auth.uid());
+
+-- ============================================
+-- CALC_MASTER
+-- ============================================
 
 create table calc_master (
 id uuid primary key default gen_random_uuid(),
@@ -31,15 +43,31 @@ alter table calc_master enable row level security;
 
 create policy "select_calc_master"
 on calc_master for select
-using (project_id in (select id from projects where user_id = auth.uid()));
+using (
+project_id in (
+select id from projects where user_id = auth.uid()
+)
+);
 
 create policy "insert_calc_master"
 on calc_master for insert
-with check (project_id in (select id from projects where user_id = auth.uid()));
+with check (
+project_id in (
+select id from projects where user_id = auth.uid()
+)
+);
 
 create policy "update_calc_master"
 on calc_master for update
-using (project_id in (select id from projects where user_id = auth.uid()));
+using (
+project_id in (
+select id from projects where user_id = auth.uid()
+)
+);
+
+-- ============================================
+-- CALC_VERSIONS
+-- ============================================
 
 create table calc_versions (
 id uuid primary key default gen_random_uuid(),
@@ -53,15 +81,31 @@ alter table calc_versions enable row level security;
 
 create policy "select_calc_versions"
 on calc_versions for select
-using (project_id in (select id from projects where user_id = auth.uid()));
+using (
+project_id in (
+select id from projects where user_id = auth.uid()
+)
+);
 
 create policy "insert_calc_versions"
 on calc_versions for insert
-with check (project_id in (select id from projects where user_id = auth.uid()));
+with check (
+project_id in (
+select id from projects where user_id = auth.uid()
+)
+);
 
 create policy "update_calc_versions"
 on calc_versions for update
-using (project_id in (select id from projects where user_id = auth.uid()));
+using (
+project_id in (
+select id from projects where user_id = auth.uid()
+)
+);
+
+-- ============================================
+-- CALC_LINES
+-- ============================================
 
 create table calc_lines (
 id uuid primary key default gen_random_uuid(),
@@ -92,7 +136,10 @@ select id from projects where user_id = auth.uid()
 )
 );
 
-create policy "update_calc_lines_fixed_price"
+-- UPDATE POLICY: FIXED PRICE MODULE
+-- Alleen categorie 1,2,3 mogen prijzen aanpassen
+-- STABU, uren, tarieven blijven altijd gelijk
+create policy "update_fixedprice_calc_lines"
 on calc_lines for update
 using (
 version_id in (
@@ -103,21 +150,21 @@ select id from projects where user_id = auth.uid()
 )
 with check (
 categorie in (1,2,3)
-and (
-(coalesce(inkoop_prijs,0) <> old.inkoop_prijs
-or coalesce(verkoop_prijs,0) <> old.verkoop_prijs
-or coalesce(materiaal_prijs,0) <> old.materiaal_prijs)
 and stabu_prijs = old.stabu_prijs
 and arbeid_uren = old.arbeid_uren
 and arbeid_tarief = old.arbeid_tarief
 and locked = old.locked
-)
 );
 
+-- VERBOD OP UPDATE CATEGORIE 4
 create policy "deny_update_categorie_4"
 on calc_lines for update
 using (categorie = 4)
 with check (false);
+
+-- ============================================
+-- LEVERANCIERS
+-- ============================================
 
 create table leveranciers (
 id uuid primary key default gen_random_uuid(),
@@ -130,10 +177,18 @@ contractnummer text
 alter table leveranciers enable row level security;
 
 create policy "select_leveranciers"
-on leveranciers for select using (true);
+on leveranciers for select
+using (true);
 
-create policy "modify_leveranciers"
-on leveranciers for all to service_role using (true);
+create policy "admin_modify_leveranciers"
+on leveranciers for all
+to service_role
+using (true)
+with check (true);
+
+-- ============================================
+-- ARTIKEL BESTANDEN
+-- ============================================
 
 create table artikel_bestanden (
 id uuid primary key default gen_random_uuid(),
@@ -148,10 +203,18 @@ laatste_update timestamp default now()
 alter table artikel_bestanden enable row level security;
 
 create policy "select_artikel_bestanden"
-on artikel_bestanden for select using (true);
+on artikel_bestanden for select
+using (true);
 
-create policy "update_artikel_bestanden"
-on artikel_bestanden for update to service_role using (true) with check (true);
+create policy "admin_update_artikel_bestanden"
+on artikel_bestanden for update
+to service_role
+using (true)
+with check (true);
+
+-- ============================================
+-- CALC PRICING LOG
+-- ============================================
 
 create table calc_pricing_log (
 id uuid primary key default gen_random_uuid(),
@@ -166,7 +229,8 @@ user_id uuid not null
 alter table calc_pricing_log enable row level security;
 
 create policy "insert_pricing_log"
-on calc_pricing_log for insert with check (user_id = auth.uid());
+on calc_pricing_log for insert
+with check (user_id = auth.uid());
 
 create policy "select_pricing_log"
 on calc_pricing_log for select
@@ -179,3 +243,7 @@ select id from projects where user_id = auth.uid()
 )
 )
 );
+
+-- ============================================
+-- EINDE MIGRATIE
+-- ============================================

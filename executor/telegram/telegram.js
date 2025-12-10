@@ -1,21 +1,35 @@
-import fetch from "node-fetch";
+import https from "https"
 
-const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const token = process.env.TELEGRAM_BOT_TOKEN
+const chatId = process.env.TELEGRAM_CHAT_ID
 
-export async function sendTelegram(text) {
-  try {
-    await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+export function sendTelegramMessage(text) {
+  return new Promise((resolve, reject) => {
+    if (!token || !chatId) return resolve() // telegram optioneel
+
+    const payload = JSON.stringify({
+      chat_id: chatId,
+      text: text
+    })
+
+    const options = {
+      hostname: "api.telegram.org",
+      port: 443,
+      path: `/bot${token}/sendMessage`,
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text
-      })
-    });
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(payload)
+      }
+    }
 
-    console.log("Telegram bericht verzonden:", text);
-  } catch (err) {
-    console.log("Telegram fout:", err.message);
-  }
+    const req = https.request(options, res => {
+      res.on("data", () => {})
+      res.on("end", resolve)
+    })
+
+    req.on("error", reject)
+    req.write(payload)
+    req.end()
+  })
 }

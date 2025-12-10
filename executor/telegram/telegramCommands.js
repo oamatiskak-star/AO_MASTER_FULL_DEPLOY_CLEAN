@@ -3,9 +3,9 @@
 import { sendTelegram } from "./telegram.js"
 import fetch from "node-fetch"
 
-// ----------------------
-// Command parsing helper
-// ----------------------
+// -------------------------------
+// Command parser
+// -------------------------------
 function parseCommand(text) {
   if (!text) return null
   if (!text.startsWith("/")) return null
@@ -17,73 +17,82 @@ function parseCommand(text) {
   return { command, args }
 }
 
-// ----------------------
-// Command handlers
-// ----------------------
-async function handleStatus() {
-  return "Status OK. AO Executor draait en luistert."
+// -------------------------------
+// Commands
+// -------------------------------
+async function cmdStatus() {
+  return "AO Executor draait. Status OK."
 }
 
-async function handleBackend() {
-  return "Backend check wordt uitgevoerd…"
+async function cmdBackend() {
+  return "Backend check gestart."
 }
 
-async function handleExecutor() {
-  return "Executor actief en verbonden met Telegram."
+async function cmdExecutor() {
+  return "Executor actief en verbonden."
 }
 
-async function handleRestart() {
-  return "Opdracht ontvangen: executor herstart-signaal verzonden."
+async function cmdRestart() {
+  return "Opdracht ontvangen. Herstart-signaal verzonden."
 }
 
-async function handleHelp() {
+async function cmdHelp() {
   return (
     "Beschikbare commando’s:\n" +
-    "/status - huidige status\n" +
-    "/backend - check backend\n" +
-    "/executor - check executor\n" +
-    "/restart - restart opdracht\n" +
-    "/help - toon dit menu"
+    "/status\n" +
+    "/backend\n" +
+    "/executor\n" +
+    "/restart\n" +
+    "/activate_all\n" +
+    "/help"
   )
 }
 
-// ----------------------
-// Core handler functie
-// ----------------------
+async function cmdActivateAll() {
+  return (
+    "AO start nu volledige activatie van alle modules, koppelingen en functies."
+  )
+}
+
+// -------------------------------
+// Main handler
+// -------------------------------
 export async function handleTelegramCommand(message) {
   try {
     if (!message || !message.text) return
-
     const parsed = parseCommand(message.text)
     if (!parsed) return
 
     const { command } = parsed
-
     let output = null
 
     switch (command) {
       case "/status":
-        output = await handleStatus()
+        output = await cmdStatus()
         break
 
       case "/backend":
-        output = await handleBackend()
+        output = await cmdBackend()
         break
 
       case "/executor":
-        output = await handleExecutor()
+        output = await cmdExecutor()
         break
 
       case "/restart":
-        output = await handleRestart()
+        output = await cmdRestart()
         break
 
       case "/help":
-        output = await handleHelp()
+        output = await cmdHelp()
+        break
+
+      case "/activate_all":
+        output = await cmdActivateAll()
         break
 
       default:
-        output = "Onbekend commando. Gebruik /help"
+        output = "Onbekend commando. Gebruik /help."
         break
     }
 

@@ -1,3 +1,7 @@
-BACKEND_URL = https://ao-master-full-deploy-clean-zyps.onrender.com
-TELEGRAM_TOKEN = 8562514777:AAEdNWgq29pgy-JcUQxiWQeTugxprELOIN0
-TELEGRAM_CHAT_ID = 7583931210
+import { sendTelegram } from "./telegram.js";
+
+export function handleCommand(text) {
+  if (text === "/status") {
+    sendTelegram("AO Executor is actief.");
+  }
+}

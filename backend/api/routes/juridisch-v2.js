@@ -1,5 +1,3 @@
-<?php /* FILE: backend/api/routes/juridisch-v2.js — VOLLEDIG BESTAND */ ?>
-
 import express from "express"
 import PDFDocument from "pdfkit"
 import fs from "fs"

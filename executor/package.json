@@ -1,12 +1,7 @@
 {
-  "name": "executor",
+  "name": "ao-executor",
   "version": "1.0.0",
-  "private": true,
+  "main": "executor.js",
   "type": "module",
-  "dependencies": {
-    "node-fetch": "^3.3.2"
-  },
-  "scripts": {
-    "start": "node executor.js"
-  }
+  "dependencies": {}
 }

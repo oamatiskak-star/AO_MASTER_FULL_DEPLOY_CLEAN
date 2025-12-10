@@ -1,68 +1,80 @@
-import express from "express"
+import http from "http"
 import fetch from "node-fetch"
 
-const app = express()
-app.use(express.json())
+const PORT = process.env.PORT
 
-// Root endpoint for Render healthchecks
-app.get("/", (req, res) => {
-  res.json({ ok: true, service: "executor" })
-})
+// simpele JSON response helper
+function sendJson(res, obj) {
+  const data = JSON.stringify(obj)
+  res.writeHead(200, { "Content-Type": "application/json" })
+  res.end(data)
+}
 
-// Ping endpoint
-app.get("/ping", (req, res) => {
-  res.json({ status: "executor online" })
-})
-
-// Health endpoint
-app.get("/health", (req, res) => {
-  res.json({ ok: true, timestamp: Date.now() })
-})
-
-// Status endpoint
-app.get("/status", (req, res) => {
-  res.json({ executor: "running", timestamp: Date.now() })
-})
-
-// Execute endpoint
-app.post("/execute", async (req, res) => {
-  const task = req.body.task
-
-  if (!task) {
-    return res.status(400).json({ error: "Geen taak ontvangen" })
+// incoming requests handler
+const server = http.createServer(async (req, res) => {
+  if (req.url === "/" && req.method === "GET") {
+    return sendJson(res, { ok: true, service: "executor" })
   }
 
-  try {
-    const token = process.env.TELEGRAM_BOT_TOKEN
-    const chatId = process.env.TELEGRAM_CHAT_ID
+  if (req.url === "/ping" && req.method === "GET") {
+    return sendJson(res, { status: "executor online" })
+  }
 
-    const url = "https://api.telegram.org/bot" + token + "/sendMessage"
+  if (req.url === "/health" && req.method === "GET") {
+    return sendJson(res, { ok: true, timestamp: Date.now() })
+  }
 
-    await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: "Taak uitgevoerd: " + task
-      })
+  if (req.url === "/status" && req.method === "GET") {
+    return sendJson(res, { executor: "running", timestamp: Date.now() })
+  }
+
+  if (req.url === "/execute" && req.method === "POST") {
+    let body = ""
+
+    req.on("data", chunk => {
+      body += chunk
     })
 
-    res.json({ ok: true, executed: task })
+    req.on("end", async () => {
+      try {
+        const json = JSON.parse(body)
+        const task = json.task
 
-  } catch (err) {
-    res.json({ ok: false, error: err.toString() })
+        if (!task) {
+          return sendJson(res, { error: "Geen taak ontvangen" })
+        }
+
+        const token = process.env.TELEGRAM_BOT_TOKEN
+        const chatId = process.env.TELEGRAM_CHAT_ID
+
+        await fetch("https://api.telegram.org/bot" + token + "/sendMessage", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: "Taak uitgevoerd: " + task
+          })
+        })
+
+        return sendJson(res, { ok: true, executed: task })
+      } catch (err) {
+        return sendJson(res, { ok: false, error: err.toString() })
+      }
+    })
+
+    return
   }
+
+  // default fallback
+  sendJson(res, { error: "Unknown route" })
 })
 
-// Start server (RENDER FIX: MUST BIND TO 0.0.0.0)
-const PORT = process.env.PORT || 7070
-
-app.listen(PORT, "0.0.0.0", () => {
+// Bind correct for Render
+server.listen(PORT, "0.0.0.0", () => {
   console.log("Executor draait op poort " + PORT)
 })
 
-// Heartbeat to avoid Render HTML fallbacks
+// heartbeat
 setInterval(() => {
-  const url = "http://localhost:" + PORT + "/ping"
-  fetch(url).catch(() => {})
+  fetch("http://localhost:" + PORT + "/ping").catch(() => {})
 }, 60000)

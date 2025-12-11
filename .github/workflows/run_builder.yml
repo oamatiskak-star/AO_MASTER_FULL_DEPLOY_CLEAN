@@ -1,0 +1,25 @@
+name: Run Structure Builder Once
+
+on:
+  workflow_dispatch:  # handmatige run
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Run STRUCTURE_BUILDER
+        run: node scripts/STRUCTURE_BUILDER.js
+
+      - name: Commit changes
+        run: |
+          git config user.email "system@builder.com"
+          git config user.name "Builder"
+          git add .
+          git commit -m "STRUCTURE BUILDER OUTPUT" || true
+          git push || true

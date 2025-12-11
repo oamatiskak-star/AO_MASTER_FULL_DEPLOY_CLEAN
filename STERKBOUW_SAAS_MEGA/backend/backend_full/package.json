@@ -1,13 +1,15 @@
-
 {
-  "name": "sterkbouw-backend",
+  "name": "backend_full",
   "version": "1.0.0",
   "type": "module",
+  "main": "api/server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node api/server.js"
   },
   "dependencies": {
-    "express": "^4.19.0",
-    "@supabase/supabase-js": "^2.86.2"
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5"
   }
 }

@@ -1,20 +1,24 @@
-module.exports = {
-name: "job_repair",
-
-async run({ log }) {
-log("REPAIR gestart")
-
 const backendCheck = require("../lib/backendVerify")
 const frontendLink = require("../lib/frontendLink")
 const supaLink = require("../lib/supabaseLink")
 
-await backendCheck.fix(log)
-await frontendLink.link(log)
-await supaLink.sync(log)
+module.exports = {
+  name: "job_repair",
 
-log("REPAIR voltooid")
-return true
+  run: async (log) => {
+    try {
+      log("REPAIR gestart")
 
+      await backendCheck.fix(log)
+      await frontendLink.link(log)
+      await supaLink.sync(log)
 
-}
+      log("REPAIR voltooid")
+      return true
+
+    } catch (err) {
+      log("REPAIR fout: " + err.toString())
+      return false
+    }
+  }
 }

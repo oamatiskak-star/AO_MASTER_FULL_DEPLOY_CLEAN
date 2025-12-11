@@ -9,7 +9,6 @@ log("Start Finalisatie SAAS…");
 
 const ROOT = process.cwd();
 
-// Alle bronmappen die al in GitHub staan
 const SOURCES = [
   "frontend_full",
   "backend_full",
@@ -38,7 +37,6 @@ const SOURCES = [
   "STERKBOUW_WORKFLOWS"
 ];
 
-// Doelstructuur
 const TARGETS = {
   frontend: "app/frontend",
   backend: "app/backend",
@@ -50,75 +48,56 @@ const TARGETS = {
 };
 
 function ensureDir(dir) {
-  try {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-  } catch (err) {
-    log(`FOUT bij aanmaken map ${dir}: ${err.message}`);
-  }
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
 function copy(src, dest) {
-  try {
-    const stat = fs.statSync(src);
+  const stat = fs.statSync(src);
 
-    if (stat.isDirectory()) {
-      ensureDir(dest);
-      const files = fs.readdirSync(src);
-      for (const file of files) {
-        copy(path.join(src, file), path.join(dest, file));
-      }
-    } else {
-      ensureDir(path.dirname(dest));
-      fs.copyFileSync(src, dest);
+  if (stat.isDirectory()) {
+    ensureDir(dest);
+    for (const file of fs.readdirSync(src)) {
+      copy(path.join(src, file), path.join(dest, file));
     }
-  } catch (err) {
-    log(`Copy error ${src} → ${dest}: ${err.message}`);
+  } else {
+    ensureDir(path.dirname(dest));
+    fs.copyFileSync(src, dest);
   }
 }
 
-log("Controle doelstructuur…");
 Object.values(TARGETS).forEach(ensureDir);
 
-log("Kopiëren van alle componenten…");
+log("Start kopiëren…");
 
 for (const srcFolder of SOURCES) {
   const fullSrc = path.join(ROOT, srcFolder);
-
   if (!fs.existsSync(fullSrc)) {
-    log(`Ontbreekt: ${srcFolder} (overslaan)`);
+    log(`ONTBREKEND → ${srcFolder}`);
     continue;
   }
 
-  let targetCategory = TARGETS.modules;
+  let target = TARGETS.modules;
 
-  if (srcFolder.includes("frontend")) targetCategory = TARGETS.frontend;
-  else if (srcFolder.includes("backend")) targetCategory = TARGETS.backend;
-  else if (srcFolder.includes("executor")) targetCategory = TARGETS.executor;
-  else if (srcFolder.includes("database")) targetCategory = TARGETS.database;
-  else if (srcFolder.includes("deploy")) targetCategory = TARGETS.deploy;
-  else if (srcFolder.includes("ENV")) targetCategory = TARGETS.env;
+  if (srcFolder.includes("frontend")) target = TARGETS.frontend;
+  else if (srcFolder.includes("backend")) target = TARGETS.backend;
+  else if (srcFolder.includes("executor")) target = TARGETS.executor;
+  else if (srcFolder.includes("database")) target = TARGETS.database;
+  else if (srcFolder.includes("deploy")) target = TARGETS.deploy;
+  else if (srcFolder.includes("ENV")) target = TARGETS.env;
 
-  log(`Kopieer: ${srcFolder} → ${targetCategory}/${srcFolder}`);
-  copy(fullSrc, path.join(targetCategory, srcFolder));
+  const dest = path.join(target, srcFolder);
+
+  log(`COPY: ${srcFolder} → ${dest}`);
+  copy(fullSrc, dest);
 }
 
-log("Opruimen oude AO_MISSING bestanden…");
+log("Verwijderen oude pakketten…");
 
-try {
-  const items = fs.readdirSync(ROOT);
-  for (const file of items) {
-    if (file.startsWith("AO_MISSING_COMPONENTS")) {
-      fs.rmSync(path.join(ROOT, file), { recursive: true, force: true });
-      log(`Verwijderd: ${file}`);
-    }
+for (const item of fs.readdirSync(ROOT)) {
+  if (item.startsWith("AO_MISSING_COMPONENTS")) {
+    fs.rmSync(path.join(ROOT, item), { recursive: true, force: true });
+    log(`VERWIJDERD: ${item}`);
   }
-} catch (err) {
-  log("Fout bij opruimen oude bestanden: " + err.message);
 }
 
-log("Finalisatie voltooid. Alle SAAS-componenten staan op juiste plek.");
-
-process.exit(0);
-
+log("FINALISATIE COMPLETE ✔");

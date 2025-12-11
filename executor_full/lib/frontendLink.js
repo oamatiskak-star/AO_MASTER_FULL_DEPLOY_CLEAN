@@ -1,23 +1,30 @@
-module.exports = {
-async link(log) {
-
 const fs = require("fs")
 const path = require("path")
 
-const frontend = path.join("/opt/render/project/src", "frontend")
+module.exports = {
+  async link(log) {
+    log("FrontendLink gestart")
 
-if (!fs.existsSync(frontend)) {
-  log("Frontend ontbreekt")
-  return
-}
+    const root = "/opt/render/project/src"
+    const frontend = path.join(root, "frontend")
 
-const envFile = path.join(frontend, ".env.local")
+    if (!fs.existsSync(frontend)) {
+      log("Frontend ontbreekt → overslaan")
+      return true
+    }
 
-const backendUrl = process.env.BACKEND_URL || "https://ao-backend.onrender.com"
+    const envFile = path.join(frontend, ".env.local")
 
-fs.writeFileSync(envFile, `NEXT_PUBLIC_BACKEND_URL=${backendUrl}\n`)
-log("Frontend .env.local geüpdatet")
+    const backendUrl =
+      process.env.BACKEND_URL ||
+      "https://ao-backend.onrender.com"
 
+    const content = `NEXT_PUBLIC_BACKEND_URL=${backendUrl}\n`
 
-}
+    fs.writeFileSync(envFile, content)
+    log(".env.local geüpdatet voor frontend")
+
+    log("FrontendLink voltooid")
+    return true
+  }
 }

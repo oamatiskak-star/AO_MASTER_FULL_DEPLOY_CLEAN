@@ -1,0 +1,9 @@
+
+{
+  "name": "sterkbouw-backend",
+  "type": "web_service",
+  "env": "node",
+  "region": "fra",
+  "buildCommand": "npm install",
+  "startCommand": "node server.js"
+}

@@ -1,0 +1,7 @@
+
+{
+  "buckets": [
+    { "name": "project_files", "public": false },
+    { "name": "calculations", "public": false }
+  ]
+}

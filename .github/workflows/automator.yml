@@ -7,13 +7,15 @@ on:
 jobs:
   run-automator:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -29,7 +31,7 @@ jobs:
       - name: Run Full Restructure Script
         run: node bot/full_restructure.js || true
 
-      - name: Create ZIP of Result
+      - name: Create ZIP
         run: zip -r structured_repo.zip structured* repo_clean* || echo "Nothing to zip"
 
       - name: Upload Artifact
@@ -38,7 +40,7 @@ jobs:
           name: structured_repo
           path: structured_repo.zip
 
-      - name: Apply Changes Into Repo
+      - name: Commit and Push Changes
         run: |
           git config --global user.name "AO-Automator"
           git config --global user.email "automator@ao-system"

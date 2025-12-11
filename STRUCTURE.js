@@ -1,52 +1,62 @@
-const fs = require("fs-extra");
+const fs = require("fs");
 const path = require("path");
 
-function log(x){ console.log("[STRUCTURE]", x); }
+function log(msg) {
+  console.log("[STRUCTURE]", msg);
+}
 
 const ROOT = process.cwd();
 
+// Doelmappen
 const TARGET = {
   frontend: "app/frontend",
   backend: "app/backend",
   executor: "app/executor",
   database: "app/database",
-  modules: "app/modules"
+  deploy: "app/deploy",
+  modules: "app/modules",
+  env: "app/env"
 };
 
-Object.values(TARGET).forEach(d => fs.ensureDirSync(d));
+// Zorg dat doelstructuur bestaat
+Object.values(TARGET).forEach(dir => {
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+});
 
-const MAPS = {
-  frontend: ["frontend", "frontend_full", "frontend2", "frontend 2"],
-  backend: ["backend", "backend_full"],
-  executor: ["executor", "executor_full"],
-  database: ["database", "database_full"],
-  modules: [
-    "STERKBOUW_ADMIN","STERKBOUW_ARCHITECT","STERKBOUW_BIM",
-    "STERKBOUW_CALCULATOR","STERKBOUW_DASHBOARD","STERKBOUW_FILES",
-    "STERKBOUW_FINANCE","STERKBOUW_GLOBAL","STERKBOUW_HELPDESK",
-    "STERKBOUW_LOGISTIEK","STERKBOUW_PROJECTS","STERKBOUW_RISK",
-    "STERKBOUW_SAAS","STERKBOUW_SAAS_MEGA","STERKBOUW_TEAM",
-    "STERKBOUW_NOTIFICATIES","STERKBOUW_WORKFLOWS"
-  ]
-};
+// Kopieerfunctie
+function copy(src, dest) {
+  const stat = fs.statSync(src);
 
-function move(names, dest){
-  names.forEach(name=>{
-    const full = path.join(ROOT, name);
-    if(fs.existsSync(full)){
-      log("→ " + name + " → " + dest);
-      fs.copySync(full, path.join(dest, name));
+  if (stat.isDirectory()) {
+    if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+    for (const file of fs.readdirSync(src)) {
+      copy(path.join(src, file), path.join(dest, file));
     }
-  });
+  } else {
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(src, dest);
+  }
 }
 
-log("START STRUCTURING");
+// Detecteer alle mappen in root
+const all = fs.readdirSync(ROOT);
 
-// voer georganiseerde moves uit
-move(MAPS.frontend, TARGET.frontend);
-move(MAPS.backend, TARGET.backend);
-move(MAPS.executor, TARGET.executor);
-move(MAPS.database, TARGET.database);
-move(MAPS.modules, TARGET.modules);
+all.forEach(item => {
+  const full = path.join(ROOT, item);
+  if (!fs.lstatSync(full).isDirectory()) return;
 
-log("STRUCTURING COMPLETE");
+  let target = null;
+
+  if (item.includes("frontend")) target = TARGET.frontend;
+  else if (item.includes("backend")) target = TARGET.backend;
+  else if (item.includes("executor")) target = TARGET.executor;
+  else if (item.includes("database")) target = TARGET.database;
+  else if (item.includes("deploy")) target = TARGET.deploy;
+  else if (item.startsWith("ENV")) target = TARGET.env;
+  else target = TARGET.modules;
+
+  log(`Kopieer → ${item} → ${target}`);
+  copy(full, path.join(target, item));
+});
+
+log("STRUCTURE COMPLEET.");

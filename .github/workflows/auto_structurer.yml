@@ -1,0 +1,32 @@
+name: Auto Structurer
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  structure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install fs-extra
+        run: npm install fs-extra
+
+      - name: Run Structuring Program
+        run: node STRUCTURE.js
+
+      - name: Auto Commit
+        run: |
+          git config user.email "auto@system.com"
+          git config user.name "Auto Structurer"
+          git add .
+          git commit -m "AUTO: Structure & Repair" || true
+          git push || true

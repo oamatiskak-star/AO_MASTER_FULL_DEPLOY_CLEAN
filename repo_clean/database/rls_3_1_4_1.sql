@@ -1,0 +1,1 @@
+alter table projects enable row level security;

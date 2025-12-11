@@ -1,0 +1,1 @@
+create or replace function test() returns void language sql as $$ select 1 $$;

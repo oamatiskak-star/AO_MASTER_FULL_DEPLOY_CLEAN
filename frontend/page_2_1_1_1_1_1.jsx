@@ -1,8 +1,1 @@
-export default function Login() {
-  return (
-    <div style={{ padding: 40 }}>
-      <h1>Login</h1>
-      <p>Login werkt.</p>
-    </div>
-  );
-}
+export default function Dashboard(){ return (<div style={{padding:20}}><h1>Dashboard</h1><p>AO SaaS actief.</p></div>) }

@@ -1,0 +1,1 @@
+export default function UploadButton(){return(<button>UPLOAD</button>)}

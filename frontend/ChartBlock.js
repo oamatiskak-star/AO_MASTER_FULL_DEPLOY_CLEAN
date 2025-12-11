@@ -1,0 +1,1 @@
+export default function ChartBlock(){return(<div>CHART BLOCK</div>)}

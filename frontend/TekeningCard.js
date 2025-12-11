@@ -1,0 +1,1 @@
+export default function TekeningCard(){return(<div>TEKENING CARD</div>)}

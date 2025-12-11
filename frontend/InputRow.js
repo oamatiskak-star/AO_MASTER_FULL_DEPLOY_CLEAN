@@ -1,0 +1,1 @@
+export default function InputRow(){return(<div>INPUT ROW</div>)}

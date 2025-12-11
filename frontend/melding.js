@@ -1,0 +1,1 @@
+export default function Melding(){return(<div>MELDING DETAIL</div>)}

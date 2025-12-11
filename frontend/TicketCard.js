@@ -1,0 +1,1 @@
+export default function TicketCard(){return(<div>TICKET CARD</div>)}

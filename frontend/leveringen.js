@@ -1,0 +1,1 @@
+export default function Leveringen(){return(<div>LEVERINGEN</div>)}

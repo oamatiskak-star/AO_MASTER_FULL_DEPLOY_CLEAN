@@ -1,0 +1,1 @@
+export default function TicketDetail(){return(<div>TICKET DETAIL</div>)}

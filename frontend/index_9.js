@@ -1,0 +1,1 @@
+export default function Notificaties(){return(<div>NOTIFICATIES</div>)}

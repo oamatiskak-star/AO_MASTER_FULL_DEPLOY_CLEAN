@@ -1,0 +1,1 @@
+export default function RiskMatrix(){return(<div>RISICO MATRIX</div>)}

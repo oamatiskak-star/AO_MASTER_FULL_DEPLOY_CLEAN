@@ -1,0 +1,1 @@
+export default function AdminCard(){return(<div>ADMIN CARD</div>)}

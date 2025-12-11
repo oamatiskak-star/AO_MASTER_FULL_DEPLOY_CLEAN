@@ -1,0 +1,7 @@
+name: auto-repair
+on: [push]
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'Auto repair placeholder'

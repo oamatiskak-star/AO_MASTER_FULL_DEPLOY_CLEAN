@@ -1,99 +1,32 @@
-// scripts/finalize_saas.js
+name: Finalize SAAS Repo
 
-import fs from "fs";
-import path from "path";
+on:
+  push:
+    paths:
+      - "trigger_FINAL_SAAS_APPLY.txt"
 
-const repoRoot = process.cwd();
+jobs:
+  run-automator:
+    runs-on: ubuntu-latest
 
-function log(msg) {
-  console.log("[FINALIZER] " + msg);
-}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-// 1. SAFE DELETE FUNCTION
-function safeDelete(target) {
-  const full = path.join(repoRoot, target);
-  if (fs.existsSync(full)) {
-    fs.rmSync(full, { recursive: true, force: true });
-    log("Removed: " + target);
-  }
-}
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-// 2. MOVE FUNCTION
-function moveDir(from, to) {
-  const src = path.join(repoRoot, from);
-  const dest = path.join(repoRoot, to);
+      - name: Run Finalizer
+        run: |
+          node scripts/finalize_saas.js
 
-  if (!fs.existsSync(src)) return;
-
-  if (!fs.existsSync(path.dirname(dest))) {
-    fs.mkdirSync(path.dirname(dest), { recursive: true });
-  }
-
-  fs.renameSync(src, dest);
-  log(`Moved ${from} -> ${to}`);
-}
-
-// ==========================================================
-// CLEANUP ZIP PACKS & OLD STRUCTURES
-// ==========================================================
-
-log("Cleaning unused ZIP packs…");
-
-const PACK_PREFIXES = [
-  "AO_MISSING_COMPONENTS",
-  "AO_MISSING_COMPONENTS_100",
-  "AO_MISSING_COMPONENTS_100_PACK",
-  "ENV_AND_REPAIR_FULL",
-  "ENV_MEGA_PACKAGE"
-];
-
-fs.readdirSync(repoRoot).forEach(item => {
-  if (PACK_PREFIXES.some(prefix => item.startsWith(prefix))) {
-    safeDelete(item);
-  }
-});
-
-// ==========================================================
-// MOVE CORE SAAS DIRECTORIES TO FINAL STRUCTURE
-// ==========================================================
-
-log("Applying final SaaS structure…");
-
-// FRONTEND
-moveDir("frontend_full", "frontend");
-moveDir("frontend", "app/frontend");
-
-// BACKEND
-moveDir("backend_full", "backend");
-moveDir("backend", "app/backend");
-
-// EXECUTOR
-moveDir("executor_full", "executor");
-moveDir("executor", "app/executor");
-
-// DATABASE
-moveDir("database_full", "database");
-moveDir("database", "app/database");
-
-// DESIGN
-moveDir("design", "app/design");
-
-// UI
-moveDir("ui-library", "app/ui-library");
-
-// WORKFLOWS
-moveDir("workflows", ".github/workflows");
-
-// ==========================================================
-// FINAL CLEANUP OF DOUBLE LAYERS
-// ==========================================================
-
-[
-  "frontend 2",
-  "backend-cloud",
-  "backend_supabase_integration",
-  "frontend_error_handling",
-  "frontend_calculatie_module"
-].forEach(safeDelete);
-
-log("Final SaaS structure applied successfully.");
+      - name: Commit and push changes
+        run: |
+          git config user.name "AO-Automator"
+          git config user.email "auto@system.com"
+          git add .
+          git commit -m "SAAS Finalized"
+          git push
+        continue-on-error: true

@@ -1,8 +1,1 @@
-export default function Settings() {
-  return (
-    <div style={{ padding: 40 }}>
-      <h1>Instellingen</h1>
-      <p>Systeeminstellingen komen hier.</p>
-    </div>
-  )
-}
+export default function S(){return(<div>Settings</div>)}

@@ -1,0 +1,1 @@
+// dashboard variant 1 placeholder

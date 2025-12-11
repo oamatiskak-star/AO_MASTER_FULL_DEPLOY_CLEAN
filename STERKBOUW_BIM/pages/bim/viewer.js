@@ -1,0 +1,1 @@
+export default function BIMViewer(){return(<div>3D VIEWER</div>)}

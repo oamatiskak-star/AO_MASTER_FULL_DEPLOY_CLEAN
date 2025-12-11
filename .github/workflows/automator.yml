@@ -4,16 +4,13 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - ".github/workflows/**"
-  workflow_dispatch:
 
 jobs:
   run-automator:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup Node
@@ -21,40 +18,11 @@ jobs:
         with:
           node-version: 18
 
-      - name: Run Automator Script
+      - name: Run Automator
         run: |
-          node scripts/automator.js
-
-      - name: Commit structured repo (if changes)
-        run: |
-          git config --global user.email "auto@system.com"
-          git config --global user.name "AO-Automator"
-          git add .
-          git commit -m "Automator update" || echo "No changes"
-          git push || echo "Nothing to push"
-
-  finalize-saas:
-    runs-on: ubuntu-latest
-    needs: run-automator
-    if: contains(github.event.head_commit.message, '[FINALIZE]')
-
-    steps:
-      - name: Checkout final repo
-        uses: actions/checkout@v3
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Run Finalization Script
-        run: |
-          node scripts/finalize_saas.js
-
-      - name: Commit final SAAS build
-        run: |
-          git config --global user.email "auto@system.com"
-          git config --global user.name "AO-Automator"
-          git add .
-          git commit -m "FINALIZED SAAS BUILD" || echo "No changes"
-          git push || echo "Nothing to push"
+          echo "Automator draait..."
+          if [ -f scripts/automator.js ]; then
+            node scripts/automator.js
+          else
+            echo "Geen automator.js gevonden. Stoppen zonder fout."
+          fi

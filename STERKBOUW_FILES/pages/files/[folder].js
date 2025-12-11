@@ -1,0 +1,1 @@
+export default function Folder(){return(<div>MAP WEERGAVE</div>)}

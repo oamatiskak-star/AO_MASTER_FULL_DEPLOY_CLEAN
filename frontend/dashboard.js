@@ -1,1 +1,0 @@
-import Layout from '../components/layout/Layout'; export default function Dash(){return(<Layout>Dashboard</Layout>)}

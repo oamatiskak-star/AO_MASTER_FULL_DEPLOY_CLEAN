@@ -1,1 +1,0 @@
-export default function KanbanColumn(){return(<div>KANBAN COLUMN</div>)}

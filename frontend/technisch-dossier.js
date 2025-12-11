@@ -1,1 +1,0 @@
-export default function TD(){return(<div>TECHNISCH DOSSIER</div>)}

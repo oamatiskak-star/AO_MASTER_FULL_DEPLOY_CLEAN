@@ -1,1 +1,0 @@
-export default function ImpactIcon(){return(<div>IMPACT</div>)}

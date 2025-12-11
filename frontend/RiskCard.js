@@ -1,1 +1,0 @@
-export default function RiskCard(){return(<div>RISK CARD</div>)}

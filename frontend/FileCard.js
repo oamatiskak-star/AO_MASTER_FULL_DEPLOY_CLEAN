@@ -1,1 +1,0 @@
-export default function FileCard(){return(<div>FILE CARD</div>)}

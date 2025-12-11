@@ -1,1 +1,0 @@
-export default function Helpdesk(){return(<div>HELPDESK PORTAAL</div>)}

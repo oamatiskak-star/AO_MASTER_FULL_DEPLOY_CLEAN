@@ -1,1 +1,0 @@
-export default function SendButton(){return(<button>STUREN</button>)}

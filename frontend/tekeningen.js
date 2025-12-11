@@ -1,1 +1,0 @@
-export default function Tekeningen(){return(<div>TEKENINGEN</div>)}

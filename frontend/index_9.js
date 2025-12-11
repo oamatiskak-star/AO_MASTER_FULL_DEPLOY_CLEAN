@@ -1,1 +1,0 @@
-export default function Files(){return(<div>BESTANDSBEHEER</div>)}

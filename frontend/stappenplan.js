@@ -1,1 +1,0 @@
-export default function Stappenplan(){return(<div>STAPPENPLAN</div>)}

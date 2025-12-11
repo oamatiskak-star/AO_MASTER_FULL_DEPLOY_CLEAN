@@ -1,1 +1,0 @@
-export default function FolderTree(){return(<div>FOLDER TREE</div>)}

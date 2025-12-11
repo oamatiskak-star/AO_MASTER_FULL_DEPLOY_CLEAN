@@ -1,1 +1,0 @@
-export default function D(){return(<div>Dashboard</div>)}

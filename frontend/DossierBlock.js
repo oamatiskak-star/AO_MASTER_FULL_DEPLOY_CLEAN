@@ -1,1 +1,0 @@
-export default function DossierBlock(){return(<div>DOSSIER BLOCK</div>)}

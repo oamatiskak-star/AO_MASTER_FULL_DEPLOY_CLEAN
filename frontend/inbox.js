@@ -1,1 +1,0 @@
-export default function Inbox(){return(<div>INBOX</div>)}

@@ -1,1 +1,0 @@
-export default function Incidenten(){return(<div>INCIDENTEN OVERZICHT</div>)}

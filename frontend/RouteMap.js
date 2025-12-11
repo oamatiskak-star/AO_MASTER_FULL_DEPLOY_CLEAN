@@ -1,1 +1,0 @@
-export default function RouteMap(){return(<div>ROUTE MAP</div>)}

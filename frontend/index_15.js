@@ -1,1 +1,0 @@
-export default function Risk(){return(<div>RISICO REGISTER</div>)}

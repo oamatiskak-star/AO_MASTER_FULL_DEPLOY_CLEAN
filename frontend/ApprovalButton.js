@@ -1,1 +1,0 @@
-export default function ApprovalButton(){return(<button>GOEDKEUREN</button>)}

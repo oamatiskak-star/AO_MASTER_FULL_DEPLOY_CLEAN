@@ -1,1 +1,0 @@
-export default function BIMDocs(){return(<div>BIM DOCUMENTEN</div>)}

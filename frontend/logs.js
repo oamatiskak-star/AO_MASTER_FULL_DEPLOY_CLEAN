@@ -1,1 +1,0 @@
-export default function AdminLogs(){return(<div>SYSTEEM LOGS</div>)}

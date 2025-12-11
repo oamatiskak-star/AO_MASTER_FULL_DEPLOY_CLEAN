@@ -1,1 +1,0 @@
-export default function TeamDetail(){return(<div>TEAM LID DETAIL</div>)}

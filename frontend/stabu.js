@@ -1,1 +1,0 @@
-export default function STABU(){return(<div>STABU MODULE</div>)}

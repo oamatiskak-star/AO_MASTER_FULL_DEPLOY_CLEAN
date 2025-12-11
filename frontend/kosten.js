@@ -1,1 +1,0 @@
-export default function Kosten(){return(<div>KOSTEN OVERZICHT</div>)}

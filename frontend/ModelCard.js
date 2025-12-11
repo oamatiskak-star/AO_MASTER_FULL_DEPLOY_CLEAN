@@ -1,1 +1,0 @@
-export default function ModelCard(){return(<div>MODEL CARD</div>)}

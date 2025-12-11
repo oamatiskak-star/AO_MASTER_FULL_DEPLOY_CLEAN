@@ -1,1 +1,0 @@
-export default function Begroting(){return(<div>BEGROTING</div>)}

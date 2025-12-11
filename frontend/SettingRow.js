@@ -1,1 +1,0 @@
-export default function SettingRow(){return(<div>SETTING ROW</div>)}

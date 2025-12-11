@@ -1,1 +1,0 @@
-export default function Configurator(){return(<div>3D CONFIGURATOR</div>)}

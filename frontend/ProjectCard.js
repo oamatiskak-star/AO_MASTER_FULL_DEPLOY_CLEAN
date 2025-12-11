@@ -1,1 +1,0 @@
-export default function ProjectCard(){return(<div>PROJECT CARD</div>)}

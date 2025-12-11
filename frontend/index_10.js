@@ -1,1 +1,0 @@
-export default function Finance(){return(<div>FINANCE DASHBOARD</div>)}

@@ -1,0 +1,1 @@
+export default function NotifBadge(){return(<span>BADGE</span>)}

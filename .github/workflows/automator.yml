@@ -1,6 +1,7 @@
-name: Super Repo Automator
+name: Finalize SAAS Repo
 
 on:
+workflow_dispatch:
   push:
     branches:
       - main

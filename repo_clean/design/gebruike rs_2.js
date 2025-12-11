@@ -1,0 +1,1 @@
+export default function AdminUsers(){return(<div>GEBRUIKERS BEHEER</div>)}

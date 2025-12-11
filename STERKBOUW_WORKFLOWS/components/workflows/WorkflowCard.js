@@ -1,0 +1,1 @@
+export default function WorkflowCard(){return(<div>WORKFLOW CARD</div>)}

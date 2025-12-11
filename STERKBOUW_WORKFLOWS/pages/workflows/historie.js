@@ -1,0 +1,1 @@
+export default function Historie(){return(<div>HISTORIE</div>)}

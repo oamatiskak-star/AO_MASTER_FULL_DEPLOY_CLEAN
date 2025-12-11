@@ -1,0 +1,1 @@
+export default function Goedkeuring(){return(<div>GOEDKEURING</div>)}

@@ -1,0 +1,1 @@
+export default function Rollen(){return(<div>ROLLEN & BEVOEGDHEDEN</div>)}

@@ -1,0 +1,1 @@
+export default function PrimaryButton(){return(<button>OPSLAAN</button>)}

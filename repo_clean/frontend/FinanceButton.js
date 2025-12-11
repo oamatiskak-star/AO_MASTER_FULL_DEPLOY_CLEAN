@@ -1,0 +1,1 @@
+export default function FinanceButton(){return(<button>FINANCE ACTIE</button>)}

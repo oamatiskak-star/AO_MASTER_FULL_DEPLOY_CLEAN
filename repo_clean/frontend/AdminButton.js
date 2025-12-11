@@ -1,0 +1,1 @@
+export default function AdminButton(){return(<button>ADMIN</button>)}

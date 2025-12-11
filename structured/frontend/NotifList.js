@@ -1,0 +1,1 @@
+export default function NotifList(){return(<div>NOTIFICATIE LIJST</div>)}

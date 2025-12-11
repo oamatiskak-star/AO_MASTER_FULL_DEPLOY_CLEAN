@@ -1,0 +1,1 @@
+export default function ArchitectButton(){return(<button>ARCHITECT ACTIE</button>)}

@@ -1,0 +1,1 @@
+export default function BIMLink(){return(<div>BIM KOPPELING</div>)}

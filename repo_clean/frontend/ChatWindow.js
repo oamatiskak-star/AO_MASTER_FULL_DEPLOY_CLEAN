@@ -1,0 +1,1 @@
+export default function ChatWindow(){return(<div>CHAT WINDOW</div>)}

@@ -1,0 +1,1 @@
+export default function FinanceCard(){return(<div>FINANCE CARD</div>)}

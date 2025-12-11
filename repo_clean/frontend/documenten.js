@@ -1,0 +1,1 @@
+export default function Documenten(){return(<div>DOCUMENT CHECKLIST</div>)}

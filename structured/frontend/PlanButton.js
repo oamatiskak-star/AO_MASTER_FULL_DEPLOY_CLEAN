@@ -1,0 +1,1 @@
+export default function PlanButton(){return(<button>PLAN</button>)}

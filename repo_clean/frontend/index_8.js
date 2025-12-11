@@ -1,0 +1,1 @@
+export default function Logistiek(){return(<div>LOGISTIEK DASHBOARD</div>)}

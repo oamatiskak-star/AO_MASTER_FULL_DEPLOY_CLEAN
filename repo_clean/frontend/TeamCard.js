@@ -1,0 +1,1 @@
+export default function TeamCard(){return(<div>TEAM CARD</div>)}

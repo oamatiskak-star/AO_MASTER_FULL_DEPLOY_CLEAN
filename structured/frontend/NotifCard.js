@@ -1,0 +1,1 @@
+export default function NotifCard(){return(<div>NOTIFICATIE CARD</div>)}

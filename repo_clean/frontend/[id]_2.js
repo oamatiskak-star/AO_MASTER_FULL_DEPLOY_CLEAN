@@ -1,0 +1,1 @@
+export default function RiskDetail(){return(<div>RISICO DETAIL</div>)}

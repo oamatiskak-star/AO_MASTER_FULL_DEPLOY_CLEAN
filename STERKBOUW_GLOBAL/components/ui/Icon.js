@@ -1,0 +1,1 @@
+export default function Icon(){return(<span>Icon</span>)}

@@ -1,4 +1,4 @@
-name: Auto Structurer
+name: CLEAN + STRUCTURE
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  structure:
+  run-clean-structure:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,16 +17,16 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install fs-extra
-        run: npm install fs-extra
+      - name: Run CLEAN.js
+        run: node CLEAN.js
 
-      - name: Run Structuring Program
+      - name: Run STRUCTURE.js
         run: node STRUCTURE.js
 
-      - name: Auto Commit
+      - name: Commit changes
         run: |
           git config user.email "auto@system.com"
           git config user.name "Auto Structurer"
           git add .
-          git commit -m "AUTO: Structure & Repair" || true
+          git commit -m "AUTO: Clean + Structure completed" || true
           git push || true

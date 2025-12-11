@@ -1,0 +1,1 @@
+export default function DeliveryCard(){return(<div>DELIVERY CARD</div>)}

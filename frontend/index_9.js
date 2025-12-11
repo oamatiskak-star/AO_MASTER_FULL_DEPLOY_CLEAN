@@ -1,1 +1,1 @@
-export default function Notificaties(){return(<div>NOTIFICATIES</div>)}
+export default function Files(){return(<div>BESTANDSBEHEER</div>)}

@@ -1,1 +1,1 @@
-export default function Home(){return(<div>STERKBOUW SAAS</div>)}
+export default function Logistiek(){return(<div>LOGISTIEK DASHBOARD</div>)}

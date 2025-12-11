@@ -1,1 +1,1 @@
-export default function P(){return(<div>Projecten</div>)}
+export default function C(){return(<div>Calculatie</div>)}

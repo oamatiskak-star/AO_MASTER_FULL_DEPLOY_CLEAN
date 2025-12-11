@@ -1,1 +1,1 @@
-export default function Calc(){return(<div>CALCULATOR HOME</div>)}
+// bim module

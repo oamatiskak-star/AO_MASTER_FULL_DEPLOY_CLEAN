@@ -1,1 +1,1 @@
-export default function Home(){return <div>SterkBouw Frontend</div>}
+export default function H(){return(<div>Helpdesk</div>)}

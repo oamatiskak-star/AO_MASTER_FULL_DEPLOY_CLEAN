@@ -1,1 +1,1 @@
-export default function Dashboard(){return(<div>STERKBOUW DASHBOARD</div>)}
+export default function Admin(){return(<div>ADMIN DASHBOARD</div>)}

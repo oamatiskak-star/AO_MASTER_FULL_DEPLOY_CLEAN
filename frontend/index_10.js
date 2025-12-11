@@ -1,1 +1,1 @@
-export default function Projects(){return(<div>PROJECTEN OVERZICHT</div>)}
+export default function Finance(){return(<div>FINANCE DASHBOARD</div>)}

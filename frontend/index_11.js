@@ -1,1 +1,1 @@
-export default function Risk(){return(<div>RISICO REGISTER</div>)}
+export default function Helpdesk(){return(<div>HELPDESK PORTAAL</div>)}

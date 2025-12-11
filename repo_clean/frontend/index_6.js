@@ -1,1 +1,1 @@
-export default function Finance(){return(<div>FINANCE DASHBOARD</div>)}
+export default function BIM(){return(<div>BIM OVERZICHT</div>)}

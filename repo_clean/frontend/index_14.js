@@ -1,1 +1,1 @@
-export default function Workflows(){return(<div>WORKFLOWS</div>)}
+export default function Projects(){return(<div>PROJECTEN OVERZICHT</div>)}

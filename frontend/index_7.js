@@ -1,1 +1,1 @@
-export default function Helpdesk(){return(<div>HELPDESK PORTAAL</div>)}
+export default function Calc(){return(<div>CALCULATOR HOME</div>)}

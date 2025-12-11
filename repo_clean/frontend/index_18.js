@@ -1,1 +1,1 @@
-export default function H(){return(<div>Helpdesk</div>)}
+export default function Workflows(){return(<div>WORKFLOWS</div>)}

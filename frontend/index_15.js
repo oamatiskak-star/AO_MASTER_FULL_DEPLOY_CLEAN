@@ -1,1 +1,1 @@
-export default function B(){return(<div>BIM</div>)}
+export default function Risk(){return(<div>RISICO REGISTER</div>)}

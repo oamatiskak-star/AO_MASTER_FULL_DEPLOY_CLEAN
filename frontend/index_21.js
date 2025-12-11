@@ -1,1 +1,1 @@
-export default function S(){return(<div>Settings</div>)}
+export default function D(){return(<div>Dashboard</div>)}

@@ -1,1 +1,1 @@
-export default function Layout({children}){return(<div>{children}</div>)}
+export default function Layout({children}){return(<div><div>Topbar</div><div>{children}</div></div>)}

@@ -1,1 +1,1 @@
-export default function D(){return(<div>Dashboard</div>)}
+export default function Team(){return(<div>TEAM OVERZICHT</div>)}

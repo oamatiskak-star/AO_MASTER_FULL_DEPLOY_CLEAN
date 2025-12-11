@@ -1,1 +1,1 @@
-export default function Architect(){return(<div>ARCHITECT OVERZICHT</div>)}
+// analytics module

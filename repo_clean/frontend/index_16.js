@@ -1,1 +1,1 @@
-export default function C(){return(<div>Calculatie</div>)}
+export default function Home(){return(<div>STERKBOUW SAAS</div>)}

@@ -1,1 +1,1 @@
-export default function Files(){return(<div>BESTANDSBEHEER</div>)}
+export default function Architect(){return(<div>ARCHITECT OVERZICHT</div>)}

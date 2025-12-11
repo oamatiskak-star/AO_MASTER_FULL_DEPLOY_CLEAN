@@ -1,1 +1,1 @@
-export default function Admin(){return(<div>ADMIN DASHBOARD</div>)}
+// admin module

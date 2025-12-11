@@ -1,1 +1,1 @@
-export default function BIM(){return(<div>BIM OVERZICHT</div>)}
+// architect module

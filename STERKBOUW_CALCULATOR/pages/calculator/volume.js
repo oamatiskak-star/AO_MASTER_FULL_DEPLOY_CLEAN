@@ -1,0 +1,1 @@
+export default function Volume(){return(<div>VOLUME BEREKENING</div>)}

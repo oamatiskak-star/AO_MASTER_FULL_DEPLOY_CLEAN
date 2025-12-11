@@ -1,0 +1,1 @@
+export default function Fundering(){return(<div>FUNDERING BEREKENING</div>)}

@@ -1,7 +1,16 @@
-import express from "express"
-import bodyParser from "body-parser"
-import { loadJobs } from "./lib/jobLoader.js"
-import { runJob } from "./lib/jobRunner.js"
+– Start een Express-server
+– Luistert op /webhook
+– Draait jouw jobs bij elke webhook
+– Blijft draaien
+– Logt alles zichtbaar in Render
+– Werkt met jouw bestaande jobLoader en jobRunner
+
+Hier is het volledige bestand, kant-en-klaar.
+
+const express = require("express")
+const bodyParser = require("body-parser")
+const { loadJobs } = require("./lib/jobLoader")
+const { runJob } = require("./lib/jobRunner")
 
 const app = express()
 app.use(bodyParser.json())
@@ -31,12 +40,12 @@ res.status(200).send("ok")
 
 
 } catch (err) {
-console.log("Fout in job runner", err)
+console.log("Fout in job runner:", err)
 res.status(500).send("error")
 }
 })
 
 const PORT = process.env.PORT || 10000
 app.listen(PORT, "0.0.0.0", () => {
-console.log("AO Executor luistert op poort", PORT)
+console.log("Executor draait op poort", PORT)
 })

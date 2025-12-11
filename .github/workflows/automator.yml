@@ -1,63 +1,60 @@
-on:
-  push:
-    branches:
-      - DISABLED
-
 name: Super Repo Automator
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+    paths-ignore:
+      - ".github/workflows/**"
+  workflow_dispatch:
 
 jobs:
   run-automator:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Run Basic Mapper
-        run: node bot/basic_map.js || true
-
-      - name: Run Advanced Mapper
-        run: node bot/advanced_map.js || true
-
-      - name: Run Full Restructure Script
-        run: node bot/full_restructure.js || true
-
-      - name: Sync Generated Structure Into Repo
+      - name: Run Automator Script
         run: |
-          echo "Copying generated structure into repository..."
-          cp -R structured/* .
-          cp -R structured_advanced/* . || true
-          cp -R repo_clean/* . || true
-          echo "Copy complete."
+          node scripts/automator.js
 
-      - name: Create ZIP
-        run: zip -r structured_repo.zip structured* repo_clean* || echo "Nothing to zip"
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: structured_repo
-          path: structured_repo.zip
-
-      - name: Commit and Push Changes
+      - name: Commit structured repo (if changes)
         run: |
+          git config --global user.email "auto@system.com"
           git config --global user.name "AO-Automator"
-          git config --global user.email "automator@ao-system"
-          git add -A
-          git status
-          git commit -m "AO Automator: Full Repo Restructure" || echo "Nothing to commit"
-          git push origin main || echo "Push failed"
+          git add .
+          git commit -m "Automator update" || echo "No changes"
+          git push || echo "Nothing to push"
+
+  finalize-saas:
+    runs-on: ubuntu-latest
+    needs: run-automator
+    if: contains(github.event.head_commit.message, '[FINALIZE]')
+
+    steps:
+      - name: Checkout final repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Run Finalization Script
+        run: |
+          node scripts/finalize_saas.js
+
+      - name: Commit final SAAS build
+        run: |
+          git config --global user.email "auto@system.com"
+          git config --global user.name "AO-Automator"
+          git add .
+          git commit -m "FINALIZED SAAS BUILD" || echo "No changes"
+          git push || echo "Nothing to push"

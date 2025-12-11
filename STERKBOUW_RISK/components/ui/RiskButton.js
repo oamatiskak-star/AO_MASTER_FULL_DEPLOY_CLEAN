@@ -1,0 +1,1 @@
+export default function RiskButton(){return(<button>RISICO ACTIE</button>)}

@@ -1,35 +1,99 @@
-name: Finalize SaaS Repo
-on:
-  push:
-    paths:
-      - "trigger_FINAL_SAAS_APPLY.txt"
+// scripts/finalize_saas.js
 
-jobs:
-  run-automator:
-    runs-on: ubuntu-latest
+import fs from "fs";
+import path from "path";
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+const repoRoot = process.cwd();
 
-      - name: Set Git Identity
-        run: |
-          git config --global user.email "automator@sterkbouw.ai"
-          git config --global user.name "AO-Automator"
+function log(msg) {
+  console.log("[FINALIZER] " + msg);
+}
 
-      - name: Install Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
+// 1. SAFE DELETE FUNCTION
+function safeDelete(target) {
+  const full = path.join(repoRoot, target);
+  if (fs.existsSync(full)) {
+    fs.rmSync(full, { recursive: true, force: true });
+    log("Removed: " + target);
+  }
+}
 
-      - name: Run Finalizer
-        run: |
-          node scripts/finalize_saas.js
+// 2. MOVE FUNCTION
+function moveDir(from, to) {
+  const src = path.join(repoRoot, from);
+  const dest = path.join(repoRoot, to);
 
-      - name: Commit & push changes
-        run: |
-          git add .
-          git commit -m "FINAL: SaaS Structure Applied"
-          git push origin main
+  if (!fs.existsSync(src)) return;
+
+  if (!fs.existsSync(path.dirname(dest))) {
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+  }
+
+  fs.renameSync(src, dest);
+  log(`Moved ${from} -> ${to}`);
+}
+
+// ==========================================================
+// CLEANUP ZIP PACKS & OLD STRUCTURES
+// ==========================================================
+
+log("Cleaning unused ZIP packs…");
+
+const PACK_PREFIXES = [
+  "AO_MISSING_COMPONENTS",
+  "AO_MISSING_COMPONENTS_100",
+  "AO_MISSING_COMPONENTS_100_PACK",
+  "ENV_AND_REPAIR_FULL",
+  "ENV_MEGA_PACKAGE"
+];
+
+fs.readdirSync(repoRoot).forEach(item => {
+  if (PACK_PREFIXES.some(prefix => item.startsWith(prefix))) {
+    safeDelete(item);
+  }
+});
+
+// ==========================================================
+// MOVE CORE SAAS DIRECTORIES TO FINAL STRUCTURE
+// ==========================================================
+
+log("Applying final SaaS structure…");
+
+// FRONTEND
+moveDir("frontend_full", "frontend");
+moveDir("frontend", "app/frontend");
+
+// BACKEND
+moveDir("backend_full", "backend");
+moveDir("backend", "app/backend");
+
+// EXECUTOR
+moveDir("executor_full", "executor");
+moveDir("executor", "app/executor");
+
+// DATABASE
+moveDir("database_full", "database");
+moveDir("database", "app/database");
+
+// DESIGN
+moveDir("design", "app/design");
+
+// UI
+moveDir("ui-library", "app/ui-library");
+
+// WORKFLOWS
+moveDir("workflows", ".github/workflows");
+
+// ==========================================================
+// FINAL CLEANUP OF DOUBLE LAYERS
+// ==========================================================
+
+[
+  "frontend 2",
+  "backend-cloud",
+  "backend_supabase_integration",
+  "frontend_error_handling",
+  "frontend_calculatie_module"
+].forEach(safeDelete);
+
+log("Final SaaS structure applied successfully.");

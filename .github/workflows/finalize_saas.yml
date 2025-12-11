@@ -1,10 +1,8 @@
 name: Finalize SaaS Repo
-
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    paths:
+      - "trigger_FINAL_SAAS_APPLY.txt"
 
 jobs:
   run-automator:
@@ -12,45 +10,26 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Run Final SaaS Automator
+      - name: Set Git Identity
         run: |
-          echo "=== START FINAL REPO BUILD ==="
+          git config --global user.email "automator@sterkbouw.ai"
+          git config --global user.name "AO-Automator"
 
-          # Remove duplicated or temporary folders
-          rm -rf AO_MISSING_COMPONENTS*
-          rm -rf structured_repo*
-          rm -rf frontend_*
-          rm -rf backend_*
-          rm -rf executor_*
-          rm -rf database_*
-          
-          # Create final structure
-          mkdir -p backend frontend executor database env
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-          # Move backend
-          cp -R backend_full/* backend/ || true
-          cp -R backend_root/* backend/ || true
-
-          # Move frontend
-          cp -R frontend_full/* frontend/ || true
-          
-          # Move executor
-          cp -R executor_full/* executor/ || true
-
-          # Move database
-          cp -R database_full/* database/ || true
-
-          # Move ENV
-          cp -R ENV_AND_REPAIR_FULL/* env/ || true
-
-          echo "Mapping complete"
-
-      - name: Commit Final Structure
+      - name: Run Finalizer
         run: |
-          git config user.name "AO-Automator"
-          git config user.email "automator@sterkbouw.ai"
+          node scripts/finalize_saas.js
+
+      - name: Commit & push changes
+        run: |
           git add .
-          git commit -m "FINAL_SAAS_STRUCTURE_APPLY"
-          git push
+          git commit -m "FINAL: SaaS Structure Applied"
+          git push origin main

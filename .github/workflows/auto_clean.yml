@@ -1,0 +1,29 @@
+name: Auto Clean Root
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Run CLEAN.js
+        run: node CLEAN.js
+
+      - name: Commit Cleanup
+        run: |
+          git config user.email "clean@system.com"
+          git config user.name "Auto Cleaner"
+          git add .
+          git commit -m "AUTO CLEAN: Verwijder AO_MISSING + PACK troep" || true
+          git push || true

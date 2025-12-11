@@ -1,32 +1,27 @@
-name: CLEAN + STRUCTURE
+name: Run Structure Builder Once
 
 on:
   push:
-    branches:
-      - main
+    paths:
+      - "scripts/STRUCTURE_BUILDER.js"
 
 jobs:
-  run-clean-structure:
+  run-builder:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Install Node
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      - name: Run CLEAN.js
-        run: node CLEAN.js
-
-      - name: Run STRUCTURE.js
-        run: node STRUCTURE.js
-
-      - name: Commit changes
+      - name: Run STRUCTURE_BUILDER
         run: |
-          git config user.email "auto@system.com"
-          git config user.name "Auto Structurer"
-          git add .
-          git commit -m "AUTO: Clean + Structure completed" || true
-          git push || true
+          echo "STRUCTURE BUILDER: Start"
+          node scripts/STRUCTURE_BUILDER.js
+          echo "STRUCTURE BUILDER voltooid."

@@ -1,0 +1,56 @@
+name: Finalize SaaS Repo
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  run-automator:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Run Final SaaS Automator
+        run: |
+          echo "=== START FINAL REPO BUILD ==="
+
+          # Remove duplicated or temporary folders
+          rm -rf AO_MISSING_COMPONENTS*
+          rm -rf structured_repo*
+          rm -rf frontend_*
+          rm -rf backend_*
+          rm -rf executor_*
+          rm -rf database_*
+          
+          # Create final structure
+          mkdir -p backend frontend executor database env
+
+          # Move backend
+          cp -R backend_full/* backend/ || true
+          cp -R backend_root/* backend/ || true
+
+          # Move frontend
+          cp -R frontend_full/* frontend/ || true
+          
+          # Move executor
+          cp -R executor_full/* executor/ || true
+
+          # Move database
+          cp -R database_full/* database/ || true
+
+          # Move ENV
+          cp -R ENV_AND_REPAIR_FULL/* env/ || true
+
+          echo "Mapping complete"
+
+      - name: Commit Final Structure
+        run: |
+          git config user.name "AO-Automator"
+          git config user.email "automator@sterkbouw.ai"
+          git add .
+          git commit -m "FINAL_SAAS_STRUCTURE_APPLY"
+          git push

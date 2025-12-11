@@ -1,7 +1,1 @@
-{
-  "name": "ao-executor",
-  "version": "1.0.0",
-  "main": "executor.js",
-  "type": "module",
-  "dependencies": {}
-}
+{"name":"executor","version":"1.0.0"}

@@ -3,7 +3,7 @@ name: Finalize SAAS Repo
 on:
   push:
     paths:
-      - "trigger_FINAL_SAAS_APPLY.txt"
+      - "FINAL_SAAS_TRIGGER_RUN.txt"
 
 jobs:
   run-automator:
@@ -11,22 +11,26 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: 18
 
+      - name: Install Dependencies
+        run: npm install || true
+
       - name: Run Finalizer
         run: |
+          echo "Running Finalize Script..."
           node scripts/finalize_saas.js
 
-      - name: Commit and push changes
+      - name: Commit & Push Results
         run: |
-          git config user.name "AO-Automator"
-          git config user.email "auto@system.com"
+          git config --global user.email "automator@repo.com"
+          git config --global user.name "AO-Automator"
           git add .
-          git commit -m "SAAS Finalized"
+          git commit -m "SAAS FINALIZED $(date)"
           git push
         continue-on-error: true

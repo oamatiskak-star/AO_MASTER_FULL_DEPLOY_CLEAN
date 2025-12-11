@@ -1,18 +1,25 @@
-module.exports = {
-async sync(log) {
-
 const fs = require("fs")
 const path = require("path")
 
-const root = "/opt/render/project/src"
-const envPath = path.join(root, ".supabase.env")
+module.exports = {
+  async sync(log) {
+    log("SupabaseLink gestart")
 
-const supabaseUrl = process.env.SUPABASE_URL || ""
-const supabaseAnon = process.env.SUPABASE_ANON_KEY || ""
+    const root = "/opt/render/project/src"
+    const envPath = path.join(root, ".supabase.env")
 
-fs.writeFileSync(envPath, `SUPABASE_URL=${supabaseUrl}\nSUPABASE_ANON_KEY=${supabaseAnon}\n`)
-log("Supabase koppeling voltooid")
+    const supabaseUrl = process.env.SUPABASE_URL || ""
+    const supabaseAnon = process.env.SUPABASE_ANON_KEY || ""
 
+    const content =
+      `SUPABASE_URL=${supabaseUrl}\n` +
+      `SUPABASE_ANON_KEY=${supabaseAnon}\n`
 
-}
+    fs.writeFileSync(envPath, content)
+
+    log(".supabase.env geüpdatet")
+    log("SupabaseLink voltooid")
+
+    return true
+  }
 }

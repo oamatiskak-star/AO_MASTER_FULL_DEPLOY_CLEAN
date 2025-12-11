@@ -1,0 +1,21 @@
+name: Super Repo Automator
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  run-automator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: node bot/basic_map.js || true
+      - run: node bot/advanced_map.js || true
+      - run: node bot/full_restructure.js || true
+      - run: zip -r structured_repo.zip structured || echo "no structured folder yet"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: structured_repo
+          path: structured_repo.zip

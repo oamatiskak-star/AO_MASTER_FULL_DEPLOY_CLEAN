@@ -1,16 +1,16 @@
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
 
 function log(msg) {
   console.log("[FINALIZE]", msg);
 }
 
-log("Start SAAS Finalisatie…");
+log("Start Finalisatie SAAS…");
 
+// Root map
 const ROOT = process.cwd();
 
-// Bronnen
+// Mappenbron
 const SOURCES = [
   "frontend_full",
   "backend_full",
@@ -39,7 +39,6 @@ const SOURCES = [
   "STERKBOUW_WORKFLOWS"
 ];
 
-// Doelen
 const TARGETS = {
   frontend: "app/frontend",
   backend: "app/backend",
@@ -56,7 +55,6 @@ function ensureDir(dir) {
 
 function copy(src, dest) {
   const stat = fs.statSync(src);
-
   if (stat.isDirectory()) {
     ensureDir(dest);
     for (const file of fs.readdirSync(src)) {
@@ -68,62 +66,39 @@ function copy(src, dest) {
   }
 }
 
-log("Aanmaken doelmappen…");
+log("Aanmaken doelstructuur…");
 Object.values(TARGETS).forEach(ensureDir);
 
-log("Kopiëren van componenten…");
+log("Start kopiëren…");
 
-for (const src of SOURCES) {
-  const fullSrc = path.join(ROOT, src);
+for (const srcFolder of SOURCES) {
+  const fullSrc = path.join(ROOT, srcFolder);
   if (!fs.existsSync(fullSrc)) {
-    log(`Ontbreekt: ${src} (overslaan)`);
+    log(`Map ontbreekt: ${srcFolder}, overslaan.`);
     continue;
   }
 
-  let target = TARGETS.modules;
+  let targetCategory = null;
 
-  if (src.includes("frontend")) target = TARGETS.frontend;
-  else if (src.includes("backend")) target = TARGETS.backend;
-  else if (src.includes("executor")) target = TARGETS.executor;
-  else if (src.includes("database")) target = TARGETS.database;
-  else if (src.includes("deploy")) target = TARGETS.deploy;
-  else if (src.includes("ENV")) target = TARGETS.env;
+  if (srcFolder.includes("frontend")) targetCategory = TARGETS.frontend;
+  else if (srcFolder.includes("backend")) targetCategory = TARGETS.backend;
+  else if (srcFolder.includes("executor")) targetCategory = TARGETS.executor;
+  else if (srcFolder.includes("database")) targetCategory = TARGETS.database;
+  else if (srcFolder.includes("deploy")) targetCategory = TARGETS.deploy;
+  else if (srcFolder.includes("ENV")) targetCategory = TARGETS.env;
+  else targetCategory = TARGETS.modules;
 
-  log(`COPY: ${src} → ${target}/${src}`);
-  copy(fullSrc, path.join(target, src));
+  log(`Kopieer ${srcFolder} → ${targetCategory}`);
+  copy(fullSrc, path.join(targetCategory, srcFolder));
 }
 
-log("Verwijderen oude AO_MISSING mappen…");
+log("Verwijderen AO_MISSING_* …");
 
-for (const f of fs.readdirSync(ROOT)) {
-  if (f.startsWith("AO_MISSING_COMPONENTS")) {
-    fs.rmSync(path.join(ROOT, f), { recursive: true, force: true });
-    log(`Verwijderd: ${f}`);
+for (const file of fs.readdirSync(ROOT)) {
+  if (file.startsWith("AO_MISSING_COMPONENTS")) {
+    fs.rmSync(path.join(ROOT, file), { recursive: true, force: true });
+    log(`Verwijderd: ${file}`);
   }
 }
 
-// ---- FIX: commit mag NOOIT falen → exit 0 GARANTIE ----
-
-try {
-  log("Git voorbereiden…");
-  execSync('git config --global user.email "automator@repo.com"');
-  execSync('git config --global user.name "Automator"');
-
-  log("Git add…");
-  execSync("git add -A", { stdio: "inherit" });
-
-  log("Git commit…");
-  execSync('git commit -m "SAAS Finalized"', { stdio: "inherit" });
-} catch (e) {
-  log("Geen commit nodig (OK).");
-}
-
-try {
-  log("Git push…");
-  execSync("git push", { stdio: "inherit" });
-} catch (e) {
-  log("Push niet nodig of al up-to-date.");
-}
-
-log("SAAS FINALISATIE VOLTOOID – EXIT 0 GEGARANDEERD.");
-process.exit(0);
+log("Finalisatie SAAS voltooid.");

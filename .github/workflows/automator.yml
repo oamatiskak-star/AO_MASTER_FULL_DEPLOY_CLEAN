@@ -1,17 +1,14 @@
 name: Finalize SAAS Repo
 
 on:
-workflow_dispatch:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  run-automator:
+  finalize-saas:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Setup Node
@@ -19,11 +16,7 @@ jobs:
         with:
           node-version: 18
 
-      - name: Run Automator
+      - name: Run finalizer
         run: |
-          echo "Automator draait..."
-          if [ -f scripts/automator.js ]; then
-            node scripts/automator.js
-          else
-            echo "Geen automator.js gevonden. Stoppen zonder fout."
-          fi
+          echo "Finalizer draait..."
+          node scripts/finalize_saas.js

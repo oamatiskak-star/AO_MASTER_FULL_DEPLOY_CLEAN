@@ -2,9 +2,6 @@ import express from "express"
 import cors from "cors"
 import bodyParser from "body-parser"
 import routes from "./routes/index.js"
-import dotenv from "dotenv"
-
-dotenv.config()
 
 const app = express()
 app.use(cors())
@@ -21,10 +18,10 @@ app.post("/webhook", (req, res) => {
 app.use("/api", routes)
 
 app.get("/api/ping", (req, res) => {
-  res.json({ ok: true, cloud: true, msg: "AO Cloud Backend actief" })
+  res.json({ ok: true, cloud: true })
 })
 
 const PORT = process.env.PORT || 4000
 app.listen(PORT, "0.0.0.0", () => {
-  console.log("AO CLOUD BACKEND draait op poort " + PORT)
+  console.log("AO CLOUD draait op poort " + PORT)
 })

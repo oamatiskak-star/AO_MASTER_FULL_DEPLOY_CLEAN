@@ -1,0 +1,9 @@
+
+{
+  "name": "sterkbouw-executor",
+  "type": "worker",
+  "env": "node",
+  "region": "fra",
+  "buildCommand": "npm install",
+  "startCommand": "node executor.js"
+}

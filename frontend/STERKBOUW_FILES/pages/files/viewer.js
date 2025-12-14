@@ -1,0 +1,1 @@
+export default function Viewer(){return(<div>BESTAND VIEWER</div>)}

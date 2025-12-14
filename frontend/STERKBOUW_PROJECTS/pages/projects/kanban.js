@@ -1,0 +1,1 @@
+export default function Kanban(){return(<div>KANBAN BOARD</div>)}

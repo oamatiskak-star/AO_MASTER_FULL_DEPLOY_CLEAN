@@ -11,34 +11,50 @@ const __dirname = path.dirname(__filename)
 /*
 AUTOMATISCHE MODULE LOADER
 – Laadt ALLE submappen in api/routes
+– Vereist per module: /<module>/index.js
 – Slaat index.js zelf over
-– Crasht niet bij fouten
+– Crasht NOOIT bij fouten
 */
 
-const entries = fs.readdirSync(__dirname, { withFileTypes: true })
+async function loadRoutes() {
+  const entries = fs.readdirSync(__dirname, { withFileTypes: true })
 
-for (const entry of entries) {
-  if (!entry.isDirectory()) continue
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue
 
-  const moduleName = entry.name
-  const moduleIndex = path.join(__dirname, moduleName, "index.js")
+    const moduleName = entry.name
+    const moduleIndex = path.join(__dirname, moduleName, "index.js")
 
-  if (!fs.existsSync(moduleIndex)) {
-    console.log("SKIP route zonder index.js:", moduleName)
-    continue
-  }
+    if (!fs.existsSync(moduleIndex)) {
+      console.log("[ROUTES] SKIP (geen index.js):", moduleName)
+      continue
+    }
 
-  try {
-    const module = await import(`./${moduleName}/index.js`)
-    router.use(`/${moduleName}`, module.default)
-    console.log("ROUTE GELADEN:", moduleName)
-  } catch (err) {
-    console.error("ROUTE FOUT:", moduleName, err.message)
+    try {
+      const mod = await import(`./${moduleName}/index.js`)
+      if (!mod.default) {
+        console.log("[ROUTES] SKIP (geen default export):", moduleName)
+        continue
+      }
+
+      router.use(`/${moduleName}`, mod.default)
+      console.log("[ROUTES] GELADEN:", moduleName)
+    } catch (err) {
+      console.error("[ROUTES] FOUT BIJ LADEN:", moduleName, err.message)
+    }
   }
 }
 
 /*
+INIT
+– Laadt routes asynchroon
+– Server kan starten zonder blokkade
+*/
+loadRoutes()
+
+/*
 FALLBACK
+– Nooit Express default 404
 */
 router.use((req, res) => {
   res.status(404).json({

@@ -4,24 +4,51 @@ import bodyParser from "body-parser"
 import routes from "./routes/index.js"
 
 const app = express()
+
 app.use(cors())
 app.use(bodyParser.json())
 
-app.post("/webhook", (req, res) => {
-  console.log("Webhook ontvangen", {
-    event: req.headers["x-github-event"],
-    delivery: req.headers["x-github-delivery"]
-  })
-  res.status(200).send("ok")
+/* =======================
+ROOT → SAAS FRONTEND
+======================= */
+app.get("/", (req, res) => {
+res.redirect("https://app.sterkbouw.nl
+")
 })
 
+/* =======================
+PING (HEALTHCHECK + AO)
+======================= */
+app.get("/ping", (req, res) => {
+res.json({
+ok: true,
+service: "AO_BACKEND",
+mode: "cloud",
+timestamp: Date.now()
+})
+})
+
+/* =======================
+GITHUB WEBHOOK
+======================= */
+app.post("/webhook", (req, res) => {
+console.log("Webhook ontvangen", {
+event: req.headers["x-github-event"],
+delivery: req.headers["x-github-delivery"]
+})
+res.status(200).send("ok")
+})
+
+/* =======================
+API ROUTES
+======================= */
 app.use("/api", routes)
 
-app.get("/api/ping", (req, res) => {
-  res.json({ ok: true, cloud: true })
-})
+/* =======================
+START SERVER
+======================= */
+const PORT = process.env.PORT || 10000
 
-const PORT = process.env.PORT || 4000
 app.listen(PORT, "0.0.0.0", () => {
-  console.log("AO CLOUD draait op poort " + PORT)
+console.log("AO CLOUD draait op poort " + PORT)
 })

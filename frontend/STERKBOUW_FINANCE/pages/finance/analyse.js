@@ -1,0 +1,1 @@
+export default function Analyse(){return(<div>FINANCIËLE ANALYSE</div>)}

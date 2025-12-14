@@ -1,0 +1,26 @@
+import * as dotenv from "dotenv"
+dotenv.config()
+
+import { startGptInterface } from "./core/gptInterface.js"
+import { startSystemArchitect } from "./core/systemArchitect.js"
+import { startMasterBuilder } from "./core/masterBuilder.js"
+
+const role = process.env.AO_ROLE
+
+console.log("AO gestart met rol:", role)
+
+if (role === "ao-gpt-interface") {
+  startGptInterface()
+}
+
+if (role === "ao-system-architect") {
+  startSystemArchitect()
+}
+
+if (role === "ao-master-builder") {
+  startMasterBuilder()
+}
+
+if (!role) {
+  console.error("AO_ROLE ontbreekt")
+}

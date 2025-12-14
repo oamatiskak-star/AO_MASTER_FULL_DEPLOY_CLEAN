@@ -17,3 +17,4 @@ router.use("/notificaties", notificatieRoutes)
 router.use("/users", usersRoutes)
 
 export default router
+ 

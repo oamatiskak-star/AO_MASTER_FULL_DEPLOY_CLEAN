@@ -1,46 +1,46 @@
-import fs from "fs"
-import path from "path"
 import express from "express"
-import { fileURLToPath } from "url"
 
 const router = express.Router()
+
+/*
+BASIS HEALTH
+– voorkomt missing import errors
+*/
+router.get("/ping", (req, res) => {
+  res.json({
+    ok: true,
+    service: "STERKBOUW SAAS BACKEND",
+    timestamp: Date.now()
+  })
+})
+
+/*
+DYNAMISCHE ROUTE LOADER
+– laadt alleen bestaande route files
+*/
+import fs from "fs"
+import path from "path"
+import { fileURLToPath } from "url"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-/*
-  Dit script:
-  – Laadt ALLE submappen in /routes automatisch
-  – Laadt elk index.js bestand per module
-  – Maakt routes beschikbaar als: /api/<mapnaam>
-  – Geen hardcoded imports
-  – SaaS-proof
-*/
+const files = fs
+  .readdirSync(__dirname)
+  .filter(
+    f =>
+      f !== "index.js" &&
+      f.endsWith(".js")
+  )
 
-const entries = fs.readdirSync(__dirname, { withFileTypes: true })
-
-for (const entry of entries) {
-  if (!entry.isDirectory()) continue
-
-  const moduleName = entry.name
-  const moduleIndex = path.join(__dirname, moduleName, "index.js")
-
-  if (!fs.existsSync(moduleIndex)) {
-    console.warn(`[ROUTES] overgeslagen (geen index.js): ${moduleName}`)
-    continue
-  }
-
+for (const file of files) {
   try {
-    const module = await import(`./${moduleName}/index.js`)
-    if (!module.default) {
-      console.warn(`[ROUTES] geen default export in ${moduleName}`)
-      continue
-    }
-
-    router.use(`/${moduleName}`, module.default)
-    console.log(`[ROUTES] geladen: /api/${moduleName}`)
-  } catch (err) {
-    console.error(`[ROUTES] fout bij laden ${moduleName}`, err.message)
+    const route = await import(`./${file}`)
+    const routeName = "/" + file.replace(".js", "")
+    router.use(routeName, route.default)
+    console.log("[ROUTE LOADED]", routeName)
+  } catch (e) {
+    console.error("[ROUTE SKIPPED]", file)
   }
 }
 

@@ -1,31 +1,33 @@
 import * as dotenv from "dotenv"
-
-console.log("RENDER BOOT OK – AO_MASTER_FULL_DEPLOY_CLEAN – src/ao.js")
-
 dotenv.config()
 
+import express from "express"
+
+const app = express()
+const PORT = process.env.PORT || 10000
+
+// health endpoint voor Render
+app.get("/", (_, res) => {
+  res.send("AO MASTER BUILDER LIVE")
+})
+
+app.get("/ping", (_, res) => {
+  res.json({ ok: true, role: "ao-master-builder" })
+})
+
+// JOUW bestaande logic
 import { startGptInterface } from "./core/gptInterface.js"
 import { startSystemArchitect } from "./core/systemArchitect.js"
 import { startMasterBuilder } from "./core/masterBuilder.js"
 
 const role = process.env.AO_ROLE
-
 console.log("AO gestart met rol:", role)
 
-switch (role) {
-case "ao-gpt-interface":
-startGptInterface()
-break
+if (role === "ao-gpt-interface") startGptInterface()
+if (role === "ao-system-architect") startSystemArchitect()
+if (role === "ao-master-builder") startMasterBuilder()
 
-case "ao-system-architect":
-startSystemArchitect()
-break
-
-case "ao-master-builder":
-startMasterBuilder()
-break
-
-default:
-console.error("AO_ROLE ontbreekt of is ongeldig:", role)
-process.exit(1)
-}
+// DIT IS DE SLEUTEL
+app.listen(PORT, () => {
+  console.log("AO Master Builder luistert op poort", PORT)
+})

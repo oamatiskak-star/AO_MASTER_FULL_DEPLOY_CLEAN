@@ -2,6 +2,6 @@
   "name": "ao-master-builder",
   "type": "module",
   "scripts": {
-    "start": "node src/ao.js"
+    "start": "node ao.js"
   }
-} 
+}

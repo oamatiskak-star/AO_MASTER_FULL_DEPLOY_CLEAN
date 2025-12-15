@@ -11,13 +11,3 @@ child.on("exit", (code) => {
 console.log("AO exited with code", code);
 process.exit(code);
 });
-
-package.json
-
-{
-"name": "ao-master-builder",
-"type": "module",
-"scripts": {
-"start": "node render-start.js"
-}
-}

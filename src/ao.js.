@@ -1,4 +1,7 @@
 import * as dotenv from "dotenv"
+
+console.log("RENDER LINK TEST – AO MASTER FULL DEPLOY CLEAN – SRC AO JS")
+
 dotenv.config()
 
 import { startGptInterface } from "./core/gptInterface.js"
@@ -10,17 +13,17 @@ const role = process.env.AO_ROLE
 console.log("AO gestart met rol:", role)
 
 if (role === "ao-gpt-interface") {
-  startGptInterface()
+startGptInterface()
 }
 
 if (role === "ao-system-architect") {
-  startSystemArchitect()
+startSystemArchitect()
 }
 
 if (role === "ao-master-builder") {
-  startMasterBuilder()
+startMasterBuilder()
 }
 
 if (!role) {
-  console.error("AO_ROLE ontbreekt")
+console.error("AO_ROLE ontbreekt")
 }

@@ -1,7 +1,7 @@
 {
-  "name": "ao-master-builder",
+  "name": "ao-master-render-entry",
   "type": "module",
   "scripts": {
-    "start": "node ao.js"
+    "start": "node render-start.js"
   }
 }

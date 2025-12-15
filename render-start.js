@@ -1,11 +1,13 @@
-import { spawn } from "child_process"
+import { spawn } from "child_process";
 
-const child = spawn("node", ["AO_MASTER_FULL_DEPLOY_CLEAN/ao.js"], {
+console.log("AO Render start wrapper actief");
+
+const child = spawn("node", ["ao.js"], {
   stdio: "inherit",
-  env: process.env
-})
+  env: process.env,
+});
 
-child.on("exit", code => {
-  console.log("AO exited with code", code)
-  process.exit(code)
-})
+child.on("exit", (code) => {
+  console.log("AO exited with code", code);
+  process.exit(code);
+});

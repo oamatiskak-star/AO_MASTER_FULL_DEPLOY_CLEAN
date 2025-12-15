@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv"
 
-console.log("RENDER LINK TEST – AO MASTER FULL DEPLOY CLEAN – SRC AO JS")
+console.log("RENDER BOOT OK – AO_MASTER_FULL_DEPLOY_CLEAN – src/ao.js")
 
 dotenv.config()
 
@@ -12,18 +12,20 @@ const role = process.env.AO_ROLE
 
 console.log("AO gestart met rol:", role)
 
-if (role === "ao-gpt-interface") {
+switch (role) {
+case "ao-gpt-interface":
 startGptInterface()
-}
+break
 
-if (role === "ao-system-architect") {
+case "ao-system-architect":
 startSystemArchitect()
-}
+break
 
-if (role === "ao-master-builder") {
+case "ao-master-builder":
 startMasterBuilder()
-}
+break
 
-if (!role) {
-console.error("AO_ROLE ontbreekt")
+default:
+console.error("AO_ROLE ontbreekt of is ongeldig:", role)
+process.exit(1)
 }
